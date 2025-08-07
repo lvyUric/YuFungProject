@@ -25,11 +25,7 @@ COPY nginx.conf /etc/nginx/nginx.conf
 # 从builder阶段复制构建产物
 COPY --from=builder /app/dist /usr/share/nginx/html
 
-# 创建非root用户
-RUN addgroup -g 1001 -S nginx && \
-    adduser -u 1001 -S nginx -G nginx
-
-# 设置权限
+# 设置权限（使用现有的nginx用户）
 RUN chown -R nginx:nginx /usr/share/nginx/html && \
     chown -R nginx:nginx /var/cache/nginx && \
     chown -R nginx:nginx /var/log/nginx && \
@@ -37,7 +33,7 @@ RUN chown -R nginx:nginx /usr/share/nginx/html && \
     touch /var/run/nginx.pid && \
     chown -R nginx:nginx /var/run/nginx.pid
 
-# 切换到非root用户
+# 切换到nginx用户
 USER nginx
 
 # 暴露端口
