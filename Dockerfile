@@ -25,6 +25,9 @@ RUN go mod download -x || (echo "下载失败，重试..." && sleep 5 && go mod 
 # 复制源代码
 COPY . .
 
+# 初始化Go模块
+RUN go mod tidy && go mod verify
+
 # 构建应用，增加构建参数和优化
 RUN go build \
     -ldflags="-w -s -extldflags=-static" \

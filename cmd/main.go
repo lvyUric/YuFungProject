@@ -11,7 +11,7 @@ import (
 	"time"
 
 	"YufungProject/configs"
-	_ "YufungProject/docs" // 导入swagger文档
+	// _ "YufungProject/docs" // 导入swagger文档 - 临时注释
 	"YufungProject/internal/routes"
 	"YufungProject/pkg/database"
 	"YufungProject/pkg/logger"
@@ -108,9 +108,7 @@ func main() {
 
 	// 关闭数据库连接
 	if err := database.DisconnectMongoDB(); err != nil {
-		logger.Errorf("数据库断开连接失败: %v", err)
-	} else {
-		logger.Info("✅ 数据库连接已关闭")
+		logger.Errorf("关闭数据库连接失败: %v", err)
 	}
 
 	logger.Info("✅ 服务器已安全关闭")
