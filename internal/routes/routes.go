@@ -85,6 +85,7 @@ func SetupRoutes(db *mongo.Database, config *configs.Config) *gin.Engine {
 	policyController := controller.NewPolicyController(policyService)                   // 添加保单控制器
 	systemConfigController := controller.NewSystemConfigController(systemConfigService) // 添加系统配置控制器
 	changeRecordController := controller.NewChangeRecordController(changeRecordService) // 添加变更记录控制器
+	activityLogController := controller.NewActivityLogController()                      // 添加活动记录控制器
 
 	// 设置认证相关路由
 	SetupAuthRoutes(router, authController, config)
@@ -106,6 +107,9 @@ func SetupRoutes(db *mongo.Database, config *configs.Config) *gin.Engine {
 
 	// 设置变更记录相关路由
 	SetupChangeRecordRoutes(router, changeRecordController, config)
+
+	// 设置活动记录相关路由
+	SetupActivityLogRoutes(router, activityLogController, config)
 
 	// 设置系统配置相关路由
 	api := router.Group("/api")

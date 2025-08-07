@@ -13,8 +13,9 @@ import {
   Card,
   Divider,
   Progress,
+  Form,
 } from 'antd';
-import { InboxOutlined, DownloadOutlined, CheckCircleOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
+import { InboxOutlined, DownloadOutlined, CheckCircleOutlined, ExclamationCircleOutlined, UploadOutlined } from '@ant-design/icons';
 import type { UploadProps } from 'antd';
 import { FormattedMessage, useIntl } from '@umijs/max';
 import { 
@@ -190,17 +191,26 @@ const ImportModal: React.FC<ImportModalProps> = ({ open, onOpenChange, onFinish 
             defaultMessage: '导入成功',
           }));
           onFinish?.(true);
-        } else {
+        } else if (response.data.success_count > 0) {
           message.warning(intl.formatMessage({
             id: 'pages.policyList.import.partialSuccess',
             defaultMessage: '部分数据导入成功，请查看错误详情',
           }));
+          // 即使有部分错误，只要成功导入了数据，也刷新页面
+          onFinish?.(true);
+        } else {
+          message.error(intl.formatMessage({
+            id: 'pages.policyList.import.allFailed',
+            defaultMessage: '所有数据导入失败',
+          }));
+          onFinish?.(false);
         }
       } else {
         message.error(response.message || intl.formatMessage({
           id: 'pages.policyList.import.error',
           defaultMessage: '导入失败',
         }));
+        onFinish?.(false);
       }
     } catch (error) {
       message.error(intl.formatMessage({
@@ -459,72 +469,48 @@ const ImportModal: React.FC<ImportModalProps> = ({ open, onOpenChange, onFinish 
         return (
           <div>
             <Alert
-              message={intl.formatMessage({
-                id: 'pages.policyList.import.uploadTip',
-                defaultMessage: '请先下载模板，按照模板格式填写数据后上传',
-              })}
+              message="导入说明"
+              description="请上传Excel或CSV文件。注意：只有投保单号为必填字段，其他字段可选。如果数据列数不足，系统会自动补充空列。"
               type="info"
               showIcon
               style={{ marginBottom: 16 }}
             />
             
-            <Space direction="vertical" style={{ width: '100%' }}>
-              <Card title="下载模板" size="small">
+            <Form layout="vertical">
+              <Form.Item label="上传文件">
+                <Upload {...uploadProps}>
+                  <Button icon={<UploadOutlined />}>选择文件</Button>
+                </Upload>
+                <div style={{ marginTop: 8, color: '#666', fontSize: '12px' }}>
+                  支持格式：Excel(.xlsx, .xls) 和 CSV(.csv)，文件大小不超过10MB
+                </div>
+              </Form.Item>
+
+              <Form.Item>
                 <Space>
-                  <Button
-                    icon={<DownloadOutlined />}
-                    onClick={() => handleDownloadTemplate('xlsx')}
-                    loading={loading}
-                  >
-                    下载 Excel 模板
-                  </Button>
-                  <Button
-                    icon={<DownloadOutlined />}
-                    onClick={() => handleDownloadTemplate('csv')}
-                    loading={loading}
-                  >
-                    下载 CSV 模板
-                  </Button>
-                </Space>
-              </Card>
-
-              <Card title="上传文件" size="small">
-                <Dragger {...uploadProps}>
-                  <p className="ant-upload-drag-icon">
-                    <InboxOutlined />
-                  </p>
-                  <p className="ant-upload-text">
-                    {intl.formatMessage({
-                      id: 'pages.policyList.import.uploadText',
-                      defaultMessage: '点击或拖拽文件到此区域上传',
-                    })}
-                  </p>
-                  <p className="ant-upload-hint">
-                    {intl.formatMessage({
-                      id: 'pages.policyList.import.uploadHint',
-                      defaultMessage: '支持 Excel(.xlsx,.xls) 和 CSV(.csv) 格式，文件大小不超过 10MB',
-                    })}
-                  </p>
-                </Dragger>
-              </Card>
-
-              <Card title="导入选项" size="small">
-                <Space direction="vertical">
-                  <Checkbox
-                    checked={skipHeader}
-                    onChange={(e) => setSkipHeader(e.target.checked)}
-                  >
+                  <Checkbox checked={skipHeader} onChange={(e) => setSkipHeader(e.target.checked)}>
                     跳过表头行
                   </Checkbox>
-                  <Checkbox
-                    checked={updateExisting}
-                    onChange={(e) => setUpdateExisting(e.target.checked)}
-                  >
-                    更新已存在的保单（根据投保单号匹配）
+                  <Checkbox checked={updateExisting} onChange={(e) => setUpdateExisting(e.target.checked)}>
+                    更新已存在的记录
                   </Checkbox>
                 </Space>
-              </Card>
-            </Space>
+              </Form.Item>
+
+              <Form.Item>
+                <Space>
+                  <Button type="primary" onClick={handlePreview} loading={loading}>
+                    预览数据
+                  </Button>
+                  <Button onClick={handleDownloadTemplate.bind(null, 'xlsx')}>
+                    下载Excel模板
+                  </Button>
+                  <Button onClick={handleDownloadTemplate.bind(null, 'csv')}>
+                    下载CSV模板
+                  </Button>
+                </Space>
+              </Form.Item>
+            </Form>
           </div>
         );
 

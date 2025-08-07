@@ -22,6 +22,9 @@ export const useTabManager = () => {
 
   // 从localStorage加载标签页
   useEffect(() => {
+    // 清除旧的标签页数据，确保新的中文标题映射生效
+    localStorage.removeItem(TAB_STORAGE_KEY);
+    
     const savedTabs = localStorage.getItem(TAB_STORAGE_KEY);
     if (savedTabs) {
       try {
@@ -134,6 +137,82 @@ export const useTabManager = () => {
     }
   }, [tabs, location.pathname, addTab]);
 
+  // 获取路径对应的中文标题
+  const getPathTitle = useCallback((path: string): string => {
+    // 完整的路径到中文标题映射
+    const pathTitleMap: Record<string, string> = {
+      // 系统管理模块
+      'user-management': '用户管理',
+      'role-management': '角色管理', 
+      'menu-management': '菜单管理',
+      'company-list': '公司管理',
+      'system-config': '系统配置',
+      
+      // 业务管理模块
+      'business-policy': '保单管理',
+      'business-customer': '客户管理',
+      
+      // 其他页面
+      'table-list': '列表页面',
+      'welcome': '首页',
+      'admin': '管理页面',
+      'login': '登录',
+      'register': '注册',
+      'changePassword': '修改密码',
+      '404': '页面未找到',
+      
+      // 路径片段映射（用于处理子路径）
+      'user': '用户',
+      'role': '角色',
+      'menu': '菜单',
+      'config': '配置',
+      'policy': '保单',
+      'customer': '客户',
+      'company': '公司',
+      'system': '系统',
+      'business': '业务',
+      'management': '管理',
+      'list': '列表',
+      'detail': '详情',
+      'create': '新增',
+      'edit': '编辑',
+      'update': '更新',
+      'delete': '删除',
+      'import': '导入',
+      'export': '导出',
+    };
+
+    // 处理完整路径
+    if (pathTitleMap[path]) {
+      return pathTitleMap[path];
+    }
+
+    // 处理路径片段
+    const pathSegments = path.split('/').filter(Boolean);
+    if (pathSegments.length > 0) {
+      const lastSegment = pathSegments[pathSegments.length - 1];
+      
+      // 先尝试完整匹配
+      if (pathTitleMap[lastSegment]) {
+        return pathTitleMap[lastSegment];
+      }
+      
+      // 尝试组合路径片段
+      if (pathSegments.length >= 2) {
+        const secondLast = pathSegments[pathSegments.length - 2];
+        const combined = `${secondLast}-${lastSegment}`;
+        if (pathTitleMap[combined]) {
+          return pathTitleMap[combined];
+        }
+      }
+      
+      // 如果都没有匹配到，返回最后一个片段（可能是英文）
+      return lastSegment;
+    }
+    
+    return '新页面';
+  }, []);
+
   // 监听路由变化，自动添加标签页
   useEffect(() => {
     // 跳过登录页面
@@ -144,32 +223,13 @@ export const useTabManager = () => {
     // 检查当前路径是否已有对应的标签页
     const existingTab = tabs.find(tab => tab.path === location.pathname);
     if (!existingTab && location.pathname !== '/welcome') {
-      // 根据路径生成标签页标题
-      const pathSegments = location.pathname.split('/').filter(Boolean);
-      let title = '新页面';
-      
-      // 简单的路径到标题映射
-      const pathTitleMap: Record<string, string> = {
-        'user-management': '用户管理',
-        'role-management': '角色管理',
-        'menu-management': '菜单管理',
-        'company-list': '公司管理',
-        'business-policy': '保单管理',
-        'business-customer': '客户管理',
-        'system-config': '系统配置',
-        'table-list': '列表页面',
-      };
-      
-      if (pathSegments.length > 0) {
-        const lastSegment = pathSegments[pathSegments.length - 1];
-        title = pathTitleMap[lastSegment] || lastSegment;
-      }
-      
+      // 获取中文标题
+      const title = getPathTitle(location.pathname);
       addOrActivateTab(location.pathname, title);
     } else if (existingTab) {
       setActiveKey(existingTab.key);
     }
-  }, [location.pathname, tabs, addOrActivateTab]);
+  }, [location.pathname, tabs, addOrActivateTab, getPathTitle]);
 
   return {
     tabs,

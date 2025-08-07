@@ -47,6 +47,8 @@ const CompanyList: React.FC = () => {
   const [importModalOpen, setImportModalOpen] = useState<boolean>(false);
   const [exportModalOpen, setExportModalOpen] = useState<boolean>(false);
   const [currentFilters, setCurrentFilters] = useState<{ status?: string; keyword?: string }>({});
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(20);
 
   // 响应式断点状态
   const [isMobile, setIsMobile] = useState(false);
@@ -474,22 +476,20 @@ const CompanyList: React.FC = () => {
             setSelectedRows(selectedRows);
           },
         }}
+        onChange={(pagination, filters, sorter) => {
+          // 处理分页变化
+          console.log('分页变化:', pagination);
+          setCurrentPage(pagination.current || 1);
+          setPageSize(pagination.pageSize || 20);
+        }}
         pagination={{
-          defaultPageSize: 20,
-          showSizeChanger: true,
+          current: currentPage,
+          pageSize: pageSize,
           showQuickJumper: true,
+          showSizeChanger: true,
+          pageSizeOptions: [10, 20, 50, 100],
           showTotal: (total, range) =>
-            intl.formatMessage(
-              {
-                id: 'pages.companyList.pagination.total',
-                defaultMessage: '共 {total} 条记录，第 {start}-{end} 条',
-              },
-              {
-                total,
-                start: range[0],
-                end: range[1],
-              },
-            ),
+            `第 ${range[0]}-${range[1]} 条/总共 ${total} 条`,
         }}
       />
       {selectedRowsState?.length > 0 && (

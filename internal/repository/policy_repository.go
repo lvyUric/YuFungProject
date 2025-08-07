@@ -4,6 +4,7 @@ import (
 	"context"
 	"math"
 	"strconv"
+	"strings"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -255,12 +256,19 @@ func (r *PolicyRepository) ListPolicies(ctx context.Context, req *model.PolicyQu
 func (r *PolicyRepository) CheckDuplicatePolicy(ctx context.Context, accountNumber, proposalNumber, companyID string, excludePolicyID string) (bool, error) {
 	collection := r.db.Collection(PolicyCollection)
 
+	// 构建查询条件
+	conditions := []bson.M{
+		{"proposal_number": proposalNumber}, // 投保单号必须唯一
+	}
+
+	// 只有当账户号不为空时才检查账户号唯一性
+	if strings.TrimSpace(accountNumber) != "" {
+		conditions = append(conditions, bson.M{"account_number": accountNumber})
+	}
+
 	filter := bson.M{
 		"company_id": companyID,
-		"$or": []bson.M{
-			{"account_number": accountNumber},
-			{"proposal_number": proposalNumber},
-		},
+		"$or":        conditions,
 	}
 
 	// 排除指定的保单ID（用于更新时检查）

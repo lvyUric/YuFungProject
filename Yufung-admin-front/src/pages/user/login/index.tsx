@@ -20,7 +20,7 @@ import {
   useModel,
   history,
 } from '@umijs/max';
-import { Alert, App, Tabs } from 'antd';
+import { Alert, App, Tabs, Button, Form } from 'antd';
 import { createStyles } from 'antd-style';
 import React, { useState } from 'react';
 import { flushSync } from 'react-dom';
@@ -48,19 +48,92 @@ const useStyles = createStyles(({ token }) => {
       lineHeight: '42px',
       position: 'fixed',
       right: 16,
+      top: 16,
       borderRadius: token.borderRadius,
+      backgroundColor: 'rgba(255, 255, 255, 0.9)',
+      backdropFilter: 'blur(10px)',
+      zIndex: 1000,
       ':hover': {
-        backgroundColor: token.colorBgTextHover,
+        backgroundColor: 'rgba(255, 255, 255, 1)',
       },
     },
     container: {
       display: 'flex',
       flexDirection: 'column',
-      height: '100vh',
-      overflow: 'auto',
+      minHeight: '100vh',
+      width: '100vw',
+      position: 'relative',
       backgroundImage:
-        "url('https://mdn.alipayobjects.com/yuyan_qk0oxh/afts/img/V-_oS6r-i7wAAAAAAAAAAAAAFl94AQBr')",
-      backgroundSize: '100% 100%',
+        "url('https://dev.admin.lifebee.tech/imgs/instance--assets.svg')",
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat',
+      backgroundAttachment: 'fixed',
+      '&::before': {
+        content: '""',
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        background: 'linear-gradient(135deg, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0.2) 100%)',
+        zIndex: 1,
+      },
+    },
+    content: {
+      position: 'relative',
+      zIndex: 2,
+      flex: '1',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: '20px',
+      minHeight: '100vh',
+    },
+    logo: {
+      width: '100px',
+      height: '100px',
+      objectFit: 'contain',
+      filter: 'drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15))',
+      transition: 'transform 0.3s ease',
+      '&:hover': {
+        transform: 'scale(1.05)',
+      },
+    },
+    formContainer: {
+      width: '100%',
+      maxWidth: '520px',
+      backgroundColor: 'rgba(255, 255, 255, 0.95)',
+      backdropFilter: 'blur(20px)',
+      borderRadius: '24px',
+      boxShadow: '0 20px 60px rgba(0, 0, 0, 0.15), 0 8px 32px rgba(0, 0, 0, 0.1)',
+      border: '1px solid rgba(255, 255, 255, 0.3)',
+      padding: '48px',
+      position: 'relative',
+      overflow: 'hidden',
+      '&::before': {
+        content: '""',
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        height: '4px',
+        background: 'linear-gradient(90deg, #1890ff, #722ed1, #eb2f96)',
+        borderRadius: '24px 24px 0 0',
+      },
+    },
+    title: {
+      fontSize: '32px',
+      fontWeight: 600,
+      color: '#1a1a1a',
+      marginBottom: '12px',
+      textAlign: 'center',
+    },
+    subtitle: {
+      fontSize: '16px',
+      color: '#666',
+      textAlign: 'center',
+      marginBottom: '40px',
     },
   };
 });
@@ -114,6 +187,7 @@ const LoginMessage: React.FC<{
 const Login: React.FC = () => {
   const [userLoginState, setUserLoginState] = useState<API.LoginResult>({});
   const [type, setType] = useState<string>('account');
+  const [form] = Form.useForm();
   const { initialState, setInitialState } = useModel('@@initialState');
   const { styles } = useStyles();
   const { message } = App.useApp();
@@ -203,237 +277,255 @@ const Login: React.FC = () => {
         </title>
       </Helmet>
       <Lang />
-      <div
-        style={{
-          flex: '1',
-          padding: '32px 0',
-        }}
-      >
-        <LoginForm
-          contentStyle={{
-            minWidth: 280,
-            maxWidth: '75vw',
-          }}
-          logo={<img alt="logo" src="/logo.svg" />}
-          title="Yufung Admin"
-          subTitle={intl.formatMessage({
-            id: 'pages.layouts.userLayout.title',
-            defaultMessage: 'Yufung Admin 是一个现代化的企业级管理后台',
-          })}
-          initialValues={{
-            autoLogin: true,
-          }}
-          actions={[
-            <FormattedMessage
-              key="loginWith"
-              id="pages.login.loginWith"
-              defaultMessage="其他登录方式"
-            />,
-            <ActionIcons key="icons" />,
-          ]}
-          onFinish={async (values) => {
-            await handleSubmit(values as API.LoginParams);
-          }}
-        >
-          <Tabs
-            activeKey={type}
-            onChange={setType}
-            centered
-            items={[
-              {
-                key: 'account',
-                label: intl.formatMessage({
-                  id: 'pages.login.accountLogin.tab',
-                  defaultMessage: '账户密码登录',
-                }),
-              },
-              {
-                key: 'mobile',
-                label: intl.formatMessage({
-                  id: 'pages.login.phoneLogin.tab',
-                  defaultMessage: '手机号登录',
-                }),
-              },
-            ]}
-          />
-
-          {status === 'error' && loginType === 'account' && (
-            <LoginMessage
-              content={intl.formatMessage({
-                id: 'pages.login.accountLogin.errorMessage',
-                defaultMessage: '账户或密码错误(admin/ant.design)',
+      <div className={styles.content}>
+        <div className={styles.formContainer}>
+          <div style={{ textAlign: 'center', marginBottom: '40px' }}>
+            <img alt="logo" src="/icons/昱丰logo鸟.png" className={styles.logo} />
+            <div className={styles.title}>Yufung Admin</div>
+            <div className={styles.subtitle}>
+              {intl.formatMessage({
+                id: 'pages.layouts.userLayout.title',
+                defaultMessage: 'Yufung Admin 是一个现代化的企业级管理后台',
               })}
-            />
-          )}
-          {type === 'account' && (
-            <>
-              <ProFormText
-                name="username"
-                fieldProps={{
-                  size: 'large',
-                  prefix: <UserOutlined />,
-                }}
-                placeholder={intl.formatMessage({
-                  id: 'pages.login.username.placeholder',
-                  defaultMessage: '用户名: admin or user',
-                })}
-                rules={[
-                  {
-                    required: true,
-                    message: (
-                      <FormattedMessage
-                        id="pages.login.username.required"
-                        defaultMessage="请输入用户名!"
-                      />
-                    ),
-                  },
-                ]}
-              />
-              <ProFormText.Password
-                name="password"
-                fieldProps={{
-                  size: 'large',
-                  prefix: <LockOutlined />,
-                }}
-                placeholder={intl.formatMessage({
-                  id: 'pages.login.password.placeholder',
-                  defaultMessage: '密码: ant.design',
-                })}
-                rules={[
-                  {
-                    required: true,
-                    message: (
-                      <FormattedMessage
-                        id="pages.login.password.required"
-                        defaultMessage="请输入密码！"
-                      />
-                    ),
-                  },
-                ]}
-              />
-            </>
-          )}
-
-          {status === 'error' && loginType === 'mobile' && (
-            <LoginMessage content="验证码错误" />
-          )}
-          {type === 'mobile' && (
-            <>
-              <ProFormText
-                fieldProps={{
-                  size: 'large',
-                  prefix: <MobileOutlined />,
-                }}
-                name="mobile"
-                placeholder={intl.formatMessage({
-                  id: 'pages.login.phoneNumber.placeholder',
-                  defaultMessage: '手机号',
-                })}
-                rules={[
-                  {
-                    required: true,
-                    message: (
-                      <FormattedMessage
-                        id="pages.login.phoneNumber.required"
-                        defaultMessage="请输入手机号！"
-                      />
-                    ),
-                  },
-                  {
-                    pattern: /^1\d{10}$/,
-                    message: (
-                      <FormattedMessage
-                        id="pages.login.phoneNumber.invalid"
-                        defaultMessage="手机号格式错误！"
-                      />
-                    ),
-                  },
-                ]}
-              />
-              <ProFormCaptcha
-                fieldProps={{
-                  size: 'large',
-                  prefix: <LockOutlined />,
-                }}
-                captchaProps={{
-                  size: 'large',
-                }}
-                placeholder={intl.formatMessage({
-                  id: 'pages.login.captcha.placeholder',
-                  defaultMessage: '请输入验证码',
-                })}
-                captchaTextRender={(timing, count) => {
-                  if (timing) {
-                    return `${count} ${intl.formatMessage({
-                      id: 'pages.getCaptchaSecondText',
-                      defaultMessage: '获取验证码',
-                    })}`;
-                  }
-                  return intl.formatMessage({
-                    id: 'pages.login.phoneLogin.getVerificationCode',
-                    defaultMessage: '获取验证码',
-                  });
-                }}
-                name="captcha"
-                rules={[
-                  {
-                    required: true,
-                    message: (
-                      <FormattedMessage
-                        id="pages.login.captcha.required"
-                        defaultMessage="请输入验证码！"
-                      />
-                    ),
-                  },
-                ]}
-                onGetCaptcha={async (phone) => {
-                  const result = await getFakeCaptcha({
-                    phone,
-                  });
-                  if (!result) {
-                    return;
-                  }
-                  message.success('获取验证码成功！验证码为：1234');
-                }}
-              />
-            </>
-          )}
-          <div
-            style={{
-              marginBottom: 24,
-            }}
-          >
-            <ProFormCheckbox noStyle name="autoLogin">
-              <FormattedMessage
-                id="pages.login.rememberMe"
-                defaultMessage="自动登录"
-              />
-            </ProFormCheckbox>
-            <a
-              style={{
-                float: 'right',
-              }}
-            >
-              <FormattedMessage
-                id="pages.login.forgotPassword"
-                defaultMessage="忘记密码"
-              />
-            </a>
+            </div>
           </div>
           
-          <div style={{ marginBottom: 24, textAlign: 'center' }}>
-            <a
-              onClick={() => {
-                history.push('/user/register');
+          <Form
+            form={form}
+            onFinish={async (values) => {
+              await handleSubmit(values as API.LoginParams);
+            }}
+            initialValues={{
+              autoLogin: true,
+            }}
+          >
+            <Tabs
+              activeKey={type}
+              onChange={setType}
+              centered
+              items={[
+                {
+                  key: 'account',
+                  label: intl.formatMessage({
+                    id: 'pages.login.accountLogin.tab',
+                    defaultMessage: '账户密码登录',
+                  }),
+                },
+                {
+                  key: 'mobile',
+                  label: intl.formatMessage({
+                    id: 'pages.login.phoneLogin.tab',
+                    defaultMessage: '手机号登录',
+                  }),
+                },
+              ]}
+            />
+
+            {status === 'error' && loginType === 'account' && (
+              <LoginMessage
+                content={intl.formatMessage({
+                  id: 'pages.login.accountLogin.errorMessage',
+                  defaultMessage: '账户或密码错误(admin/ant.design)',
+                })}
+              />
+            )}
+            {type === 'account' && (
+              <>
+                <ProFormText
+                  name="username"
+                  fieldProps={{
+                    size: 'large',
+                    prefix: <UserOutlined />,
+                  }}
+                  placeholder={intl.formatMessage({
+                    id: 'pages.login.username.placeholder',
+                    defaultMessage: '用户名: admin or user',
+                  })}
+                  rules={[
+                    {
+                      required: true,
+                      message: (
+                        <FormattedMessage
+                          id="pages.login.username.required"
+                          defaultMessage="请输入用户名!"
+                        />
+                      ),
+                    },
+                  ]}
+                />
+                <ProFormText.Password
+                  name="password"
+                  fieldProps={{
+                    size: 'large',
+                    prefix: <LockOutlined />,
+                  }}
+                  placeholder={intl.formatMessage({
+                    id: 'pages.login.password.placeholder',
+                    defaultMessage: '密码: ant.design',
+                  })}
+                  rules={[
+                    {
+                      required: true,
+                      message: (
+                        <FormattedMessage
+                          id="pages.login.password.required"
+                          defaultMessage="请输入密码！"
+                        />
+                      ),
+                    },
+                  ]}
+                />
+              </>
+            )}
+
+            {status === 'error' && loginType === 'mobile' && (
+              <LoginMessage content="验证码错误" />
+            )}
+            {type === 'mobile' && (
+              <>
+                <ProFormText
+                  fieldProps={{
+                    size: 'large',
+                    prefix: <MobileOutlined />,
+                  }}
+                  name="mobile"
+                  placeholder={intl.formatMessage({
+                    id: 'pages.login.phoneNumber.placeholder',
+                    defaultMessage: '手机号',
+                  })}
+                  rules={[
+                    {
+                      required: true,
+                      message: (
+                        <FormattedMessage
+                          id="pages.login.phoneNumber.required"
+                          defaultMessage="请输入手机号！"
+                        />
+                      ),
+                    },
+                    {
+                      pattern: /^1\d{10}$/,
+                      message: (
+                        <FormattedMessage
+                          id="pages.login.phoneNumber.invalid"
+                          defaultMessage="手机号格式错误！"
+                        />
+                      ),
+                    },
+                  ]}
+                />
+                <ProFormCaptcha
+                  fieldProps={{
+                    size: 'large',
+                    prefix: <LockOutlined />,
+                  }}
+                  captchaProps={{
+                    size: 'large',
+                  }}
+                  placeholder={intl.formatMessage({
+                    id: 'pages.login.captcha.placeholder',
+                    defaultMessage: '请输入验证码',
+                  })}
+                  captchaTextRender={(timing, count) => {
+                    if (timing) {
+                      return `${count} ${intl.formatMessage({
+                        id: 'pages.getCaptchaSecondText',
+                        defaultMessage: '获取验证码',
+                      })}`;
+                    }
+                    return intl.formatMessage({
+                      id: 'pages.login.phoneLogin.getVerificationCode',
+                      defaultMessage: '获取验证码',
+                    });
+                  }}
+                  name="captcha"
+                  rules={[
+                    {
+                      required: true,
+                      message: (
+                        <FormattedMessage
+                          id="pages.login.captcha.required"
+                          defaultMessage="请输入验证码！"
+                        />
+                      ),
+                    },
+                  ]}
+                  onGetCaptcha={async (phone) => {
+                    const result = await getFakeCaptcha({
+                      phone,
+                    });
+                    if (!result) {
+                      return;
+                    }
+                    message.success('获取验证码成功！验证码为：1234');
+                  }}
+                />
+              </>
+            )}
+            <div
+              style={{
+                marginBottom: 24,
+              }}
+            >
+              <ProFormCheckbox noStyle name="autoLogin">
+                <FormattedMessage
+                  id="pages.login.rememberMe"
+                  defaultMessage="自动登录"
+                />
+              </ProFormCheckbox>
+              <a
+                style={{
+                  float: 'right',
+                }}
+              >
+                <FormattedMessage
+                  id="pages.login.forgotPassword"
+                  defaultMessage="忘记密码"
+                />
+              </a>
+            </div>
+            
+            <Button
+              type="primary"
+              htmlType="submit"
+              size="large"
+              style={{
+                width: '100%',
+                height: '48px',
+                fontSize: '16px',
+                fontWeight: 500,
+                borderRadius: '8px',
+                marginBottom: '16px',
               }}
             >
               <FormattedMessage
-                id="pages.login.register"
-                defaultMessage="还没有账号？立即注册"
+                id="pages.login.submit"
+                defaultMessage="登录"
               />
-            </a>
-          </div>
-        </LoginForm>
+            </Button>
+            
+            <div style={{ marginBottom: 24, textAlign: 'center' }}>
+              <a
+                onClick={() => {
+                  history.push('/user/register');
+                }}
+              >
+                <FormattedMessage
+                  id="pages.login.register"
+                  defaultMessage="还没有账号？立即注册"
+                />
+              </a>
+            </div>
+            
+            <div style={{ textAlign: 'center', marginTop: '24px' }}>
+              <FormattedMessage
+                id="pages.login.loginWith"
+                defaultMessage="其他登录方式"
+              />
+              <ActionIcons />
+            </div>
+          </Form>
+        </div>
       </div>
       <Footer />
     </div>

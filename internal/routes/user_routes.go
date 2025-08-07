@@ -4,17 +4,23 @@ import (
 	"YufungProject/configs"
 	"YufungProject/internal/controller"
 	"YufungProject/internal/middleware"
+	"YufungProject/internal/service"
 
 	"github.com/gin-gonic/gin"
 )
 
 // SetupUserRoutes 设置用户管理相关路由
 func SetupUserRoutes(router *gin.Engine, userController *controller.UserController, config *configs.Config) {
+	// 初始化活动记录服务
+	activityLogService := service.NewActivityLogService()
+
 	// 用户管理路由组 - 需要认证
 	userGroup := router.Group("/api/v1/users")
 	{
 		// 添加JWT认证中间件
 		userGroup.Use(middleware.JWTAuthMiddleware(config))
+		// 添加活动记录中间件
+		userGroup.Use(middleware.ActivityLogMiddleware(activityLogService))
 		// TODO: 暂时注释管理员权限验证，方便测试功能
 		// userGroup.Use(middleware.AdminRequiredMiddleware())
 

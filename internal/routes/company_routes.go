@@ -4,15 +4,20 @@ import (
 	"YufungProject/configs"
 	"YufungProject/internal/controller"
 	"YufungProject/internal/middleware"
+	"YufungProject/internal/service"
 
 	"github.com/gin-gonic/gin"
 )
 
 // SetupCompanyRoutes 设置公司管理相关路由
 func SetupCompanyRoutes(router *gin.Engine, companyController *controller.CompanyController, config *configs.Config) {
+	// 初始化活动记录服务
+	activityLogService := service.NewActivityLogService()
+
 	// 需要认证的路由
 	companyGroup := router.Group("/api/company")
 	companyGroup.Use(middleware.AuthMiddleware(config))
+	companyGroup.Use(middleware.ActivityLogMiddleware(activityLogService)) // 添加活动记录中间件
 	{
 		// 公司统计（放在参数路由前面，避免被 :id 匹配）
 		companyGroup.GET("/stats", companyController.GetCompanyStats)

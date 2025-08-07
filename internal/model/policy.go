@@ -86,7 +86,7 @@ type PolicyCreateRequest struct {
 	IsSurrendered     bool       `json:"is_surrendered" label:"签单后是否退保"`
 	PaymentDate       *time.Time `json:"payment_date" label:"缴费日期"`
 	EffectiveDate     *time.Time `json:"effective_date" label:"生效日期"`
-	PaymentMethod     string     `json:"payment_method" binding:"oneof=期缴 趸缴 预缴" label:"缴费方式"`
+	PaymentMethod     string     `json:"payment_method" binding:"omitempty,oneof=期缴 趸缴 预缴" label:"缴费方式"`
 	PaymentYears      int        `json:"payment_years" label:"缴费年期"`
 	PaymentPeriods    int        `json:"payment_periods" label:"期缴期数"`
 	ActualPremium     float64    `json:"actual_premium" binding:"min=0" label:"实际缴纳保费"`

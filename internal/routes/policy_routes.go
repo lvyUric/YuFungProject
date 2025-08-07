@@ -4,15 +4,20 @@ import (
 	"YufungProject/configs"
 	"YufungProject/internal/controller"
 	"YufungProject/internal/middleware"
+	"YufungProject/internal/service"
 
 	"github.com/gin-gonic/gin"
 )
 
 // SetupPolicyRoutes 设置保单管理相关路由
 func SetupPolicyRoutes(router *gin.Engine, policyController *controller.PolicyController, changeRecordController *controller.ChangeRecordController, config *configs.Config) {
+	// 初始化活动记录服务
+	activityLogService := service.NewActivityLogService()
+
 	// 需要认证的路由
 	policyGroup := router.Group("/api/policies")
 	policyGroup.Use(middleware.AuthMiddleware(config))
+	policyGroup.Use(middleware.ActivityLogMiddleware(activityLogService)) // 添加活动记录中间件
 	{
 		// 保单统计（放在参数路由前面，避免被 :id 匹配）
 		policyGroup.GET("/statistics", policyController.GetPolicyStatistics)

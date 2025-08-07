@@ -4,18 +4,23 @@ import (
 	"YufungProject/configs"
 	"YufungProject/internal/controller"
 	"YufungProject/internal/middleware"
+	"YufungProject/internal/service"
 
 	"github.com/gin-gonic/gin"
 )
 
 // SetupRoleRoutes 设置角色管理相关路由
 func SetupRoleRoutes(router *gin.Engine, roleController *controller.RoleController, config *configs.Config) {
+	// 初始化活动记录服务
+	activityLogService := service.NewActivityLogService()
+
 	// 创建认证中间件
 	authMiddleware := middleware.JWTAuthMiddleware(config)
 
 	// API v1 路由组
 	v1 := router.Group("/api/v1")
-	v1.Use(authMiddleware) // 所有角色相关接口都需要认证
+	v1.Use(authMiddleware)                                       // 所有角色相关接口都需要认证
+	v1.Use(middleware.ActivityLogMiddleware(activityLogService)) // 添加活动记录中间件
 
 	// 角色管理路由
 	roles := v1.Group("/roles")

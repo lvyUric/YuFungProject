@@ -40,6 +40,8 @@ const SystemConfigManagement: React.FC = () => {
   const [createModalVisible, setCreateModalVisible] = useState(false);
   const [updateModalVisible, setUpdateModalVisible] = useState(false);
   const [currentRow, setCurrentRow] = useState<SystemConfigInfo>();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(20);
   const actionRef = useRef<ActionType>(null);
 
   // 创建系统配置
@@ -258,10 +260,18 @@ const SystemConfigManagement: React.FC = () => {
         }}
         columns={columns}
         scroll={{ x: 1200 }}
+        onChange={(pagination, filters, sorter) => {
+          // 处理分页变化
+          console.log('分页变化:', pagination);
+          setCurrentPage(pagination.current || 1);
+          setPageSize(pagination.pageSize || 20);
+        }}
         pagination={{
-          pageSize: 20,
+          current: currentPage,
+          pageSize: pageSize,
           showQuickJumper: true,
           showSizeChanger: true,
+          pageSizeOptions: [10, 20, 50, 100],
           showTotal: (total, range) =>
             `第 ${range[0]}-${range[1]} 条/总共 ${total} 条`,
         }}

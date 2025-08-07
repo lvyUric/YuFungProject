@@ -93,6 +93,13 @@ export default [
     component: './Welcome',
     hideInMenu: true,
   },
+  // 活动记录路由
+  {
+    path: '/activity-log',
+    name: 'activity-log',
+    component: './ActivityLog',
+    hideInMenu: true, // 隐藏在菜单中，由动态菜单控制
+  },
   // 兼容旧路由
   {
     path: '/user-management',

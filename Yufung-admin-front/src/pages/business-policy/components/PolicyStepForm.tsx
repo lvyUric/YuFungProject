@@ -129,6 +129,9 @@ const PolicyStepForm: React.FC<PolicyStepFormProps> = ({
   // 表单提交处理
   const handleFinish = async (values: PolicyCreateRequest) => {
     try {
+      // 添加调试信息
+      console.log('PolicyStepForm - 提交的表单数据:', values);
+      
       if (isEdit && initialValues) {
         await updatePolicy(initialValues.policy_id, values);
         message.success('保单更新成功');
@@ -138,8 +141,17 @@ const PolicyStepForm: React.FC<PolicyStepFormProps> = ({
       }
       onSuccess();
       return true;
-    } catch (error) {
-      message.error(isEdit ? '保单更新失败' : '保单创建失败');
+    } catch (error: any) {
+      console.error('PolicyStepForm - 提交失败:', error);
+      
+      // 显示更详细的错误信息
+      if (error.response?.data?.message) {
+        message.error(`提交失败: ${error.response.data.message}`);
+      } else if (error.message) {
+        message.error(`提交失败: ${error.message}`);
+      } else {
+        message.error(isEdit ? '保单更新失败' : '保单创建失败');
+      }
       return false;
     }
   };
@@ -408,6 +420,12 @@ const PolicyStepForm: React.FC<PolicyStepFormProps> = ({
             label="缴费方式"
             options={paymentMethodOptions}
             placeholder="请选择缴费方式"
+            rules={[
+              {
+                required: true,
+                message: '请选择缴费方式',
+              },
+            ]}
           />
           <ProFormDigit
             width="md"

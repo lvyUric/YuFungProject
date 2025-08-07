@@ -1,149 +1,73 @@
 .tab-manager {
-  background: #fff;
-  border-bottom: 1px solid #f0f0f0;
-  padding: 0 16px;
-  
+  background: #fff !important;
+  border-bottom: 1px solid #f0f0f0 !important;
+  padding: 0 16px !important;
+
   .custom-tabs {
     .ant-tabs-nav {
-      margin: 0;
-      
-      &::before {
-        border-bottom: none;
-      }
-      
+      margin: 0 !important;
+      &::before { border-bottom: none !important; }
+
       .ant-tabs-tab {
-        background: transparent;
-        border: none;
-        border-radius: 6px 6px 0 0;
-        margin: 0 2px 0 0;
-        padding: 8px 16px;
-        transition: all 0.3s ease;
-        
+        background: #fff !important;
+        border: none !important;
+        border-radius: 0 !important;
+        margin: 0 8px 0 0 !important;
+        padding: 12px 28px 10px 20px !important;
+        font-size: 15px !important;
+        color: #333 !important;
+        min-width: 100px !important;
+        max-width: 200px !important;
+        position: relative !important;
+        box-shadow: none !important;
+        transition: color 0.2s, border-color 0.2s;
+
         &:hover {
-          background: #f5f5f5;
+          color: #1677ff !important;
         }
-        
+
         &.ant-tabs-tab-active {
-          background: #1890ff;
-          color: #fff;
-          
-          .tab-label {
-            color: #fff;
-            
-            .tab-close-icon {
-              color: #fff;
-              
-              &:hover {
-                background: rgba(255, 255, 255, 0.2);
-                border-radius: 50%;
-              }
-            }
-          }
+          color: #1677ff !important;
+          font-weight: bold !important;
+          background: #fff !important;
         }
-        
+
+        &.ant-tabs-tab-active::after {
+          content: '';
+          position: absolute;
+          left: 16px;
+          right: 16px;
+          bottom: 0;
+          height: 3px;
+          background: #1677ff;
+          border-radius: 2px;
+        }
+
         .tab-label {
-          display: flex;
-          align-items: center;
-          gap: 6px;
-          font-size: 14px;
-          color: #666;
-          
-          .tab-icon {
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-          }
-          
-          .tab-text {
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            max-width: 120px;
-          }
-          
-          .tab-close-icon {
-            font-size: 12px;
-            color: #999;
-            margin-left: 4px;
-            padding: 2px;
-            border-radius: 50%;
-            transition: all 0.2s ease;
-            
-            &:hover {
-              background: rgba(0, 0, 0, 0.1);
-              color: #666;
-            }
-          }
+          display: flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          gap: 8px !important;
+          font-size: 15px !important;
+        }
+        .tab-text {
+          max-width: 140px !important;
+          overflow: hidden !important;
+          text-overflow: ellipsis !important;
+          white-space: nowrap !important;
         }
       }
-      
+
       .ant-tabs-tab-remove {
-        color: #999;
-        
+        color: #bbb !important;
+        margin-left: 8px !important;
+        transition: color 0.2s;
         &:hover {
-          color: #666;
+          color: #ff4d4f !important;
+          background: transparent !important;
         }
       }
     }
-    
-    .ant-tabs-content-holder {
-      display: none; // 隐藏内容区域，因为内容由路由渲染
-    }
-  }
-}
-
-// 响应式设计
-@media (max-width: 768px) {
-  .tab-manager {
-    padding: 0 8px;
-    
-    .custom-tabs {
-      .ant-tabs-nav {
-        .ant-tabs-tab {
-          padding: 6px 12px;
-          
-          .tab-label {
-            .tab-text {
-              max-width: 80px;
-            }
-          }
-        }
-      }
-    }
-  }
-}
-
-// 暗色主题支持
-@media (prefers-color-scheme: dark) {
-  .tab-manager {
-    background: #1f1f1f;
-    border-bottom-color: #303030;
-    
-    .custom-tabs {
-      .ant-tabs-nav {
-        .ant-tabs-tab {
-          &:hover {
-            background: #303030;
-          }
-          
-          &.ant-tabs-tab-active {
-            background: #177ddc;
-          }
-          
-          .tab-label {
-            color: #d9d9d9;
-            
-            .tab-close-icon {
-              color: #8c8c8c;
-              
-              &:hover {
-                background: rgba(255, 255, 255, 0.1);
-                color: #d9d9d9;
-              }
-            }
-          }
-        }
-      }
-    }
+    .ant-tabs-content-holder { display: none !important; }
   }
 } 

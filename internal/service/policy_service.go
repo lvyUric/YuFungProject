@@ -40,7 +40,12 @@ func (s *PolicyService) CreatePolicy(ctx context.Context, req *model.PolicyCreat
 		return nil, err
 	}
 	if isDuplicate {
-		return nil, fmt.Errorf("账户号或投保单号已存在")
+		// 根据具体情况给出更准确的错误信息
+		if strings.TrimSpace(req.AccountNumber) != "" {
+			return nil, fmt.Errorf("投保单号或账户号已存在")
+		} else {
+			return nil, fmt.Errorf("投保单号已存在")
+		}
 	}
 
 	// 构建保单模型
@@ -467,9 +472,14 @@ func (s *PolicyService) processPolicyImport(ctx context.Context, file multipart.
 				continue
 			}
 			if isDuplicate && !req.UpdateExisting {
+				// 根据具体情况给出更准确的错误信息
+				errorMsg := "投保单号已存在"
+				if strings.TrimSpace(policy.AccountNumber) != "" {
+					errorMsg = "投保单号或账户号已存在"
+				}
 				response.Errors = append(response.Errors, model.PolicyImportError{
 					Row:    rowNum,
-					Errors: []string{"账户号或投保单号已存在"},
+					Errors: []string{errorMsg},
 					Data:   record,
 				})
 				continue
@@ -743,57 +753,78 @@ func (s *PolicyService) parsePolicyCSVFile(file multipart.File) ([][]string, err
 func (s *PolicyService) validateAndConvertPolicyRecord(record []string, rowNum int) (*model.PolicyCreateRequest, []string) {
 	var errors []string
 
-	if len(record) < 33 {
-		errors = append(errors, "数据列数不足")
-		return nil, errors
+	// 自动补充缺失的列，确保至少有33列
+	for len(record) < 33 {
+		record = append(record, "")
 	}
 
-	// 验证必填字段
+	// 只验证必填字段：投保单号
 	if strings.TrimSpace(record[5]) == "" { // 投保单号
 		errors = append(errors, "投保单号不能为空")
 	}
 
-	// 转换数据类型
-	paymentYears, err := strconv.Atoi(strings.TrimSpace(record[18]))
-	if err != nil && strings.TrimSpace(record[18]) != "" {
-		errors = append(errors, "缴费年期格式错误")
-		paymentYears = 0
+	// 转换数据类型（只转换有值的字段）
+	paymentYears := 0
+	if strings.TrimSpace(record[18]) != "" {
+		if val, err := strconv.Atoi(strings.TrimSpace(record[18])); err != nil {
+			errors = append(errors, "缴费年期格式错误")
+		} else {
+			paymentYears = val
+		}
 	}
 
-	paymentPeriods, err := strconv.Atoi(strings.TrimSpace(record[19]))
-	if err != nil && strings.TrimSpace(record[19]) != "" {
-		errors = append(errors, "期缴期数格式错误")
-		paymentPeriods = 0
+	paymentPeriods := 0
+	if strings.TrimSpace(record[19]) != "" {
+		if val, err := strconv.Atoi(strings.TrimSpace(record[19])); err != nil {
+			errors = append(errors, "期缴期数格式错误")
+		} else {
+			paymentPeriods = val
+		}
 	}
 
-	actualPremium, err := strconv.ParseFloat(strings.TrimSpace(record[20]), 64)
-	if err != nil && strings.TrimSpace(record[20]) != "" {
-		errors = append(errors, "实际缴纳保费格式错误")
-		actualPremium = 0
+	actualPremium := 0.0
+	if strings.TrimSpace(record[20]) != "" {
+		if val, err := strconv.ParseFloat(strings.TrimSpace(record[20]), 64); err != nil {
+			errors = append(errors, "实际缴纳保费格式错误")
+		} else {
+			actualPremium = val
+		}
 	}
 
-	aum, err := strconv.ParseFloat(strings.TrimSpace(record[21]), 64)
-	if err != nil && strings.TrimSpace(record[21]) != "" {
-		errors = append(errors, "AUM格式错误")
-		aum = 0
+	aum := 0.0
+	if strings.TrimSpace(record[21]) != "" {
+		if val, err := strconv.ParseFloat(strings.TrimSpace(record[21]), 64); err != nil {
+			errors = append(errors, "AUM格式错误")
+		} else {
+			aum = val
+		}
 	}
 
-	referralRate, err := strconv.ParseFloat(strings.TrimSpace(record[24]), 64)
-	if err != nil && strings.TrimSpace(record[24]) != "" {
-		errors = append(errors, "转介费率格式错误")
-		referralRate = 0
+	referralRate := 0.0
+	if strings.TrimSpace(record[24]) != "" {
+		if val, err := strconv.ParseFloat(strings.TrimSpace(record[24]), 64); err != nil {
+			errors = append(errors, "转介费率格式错误")
+		} else {
+			referralRate = val
+		}
 	}
 
-	exchangeRate, err := strconv.ParseFloat(strings.TrimSpace(record[25]), 64)
-	if err != nil && strings.TrimSpace(record[25]) != "" {
-		errors = append(errors, "汇率格式错误")
-		exchangeRate = 0
+	exchangeRate := 0.0
+	if strings.TrimSpace(record[25]) != "" {
+		if val, err := strconv.ParseFloat(strings.TrimSpace(record[25]), 64); err != nil {
+			errors = append(errors, "汇率格式错误")
+		} else {
+			exchangeRate = val
+		}
 	}
 
-	expectedFee, err := strconv.ParseFloat(strings.TrimSpace(record[26]), 64)
-	if err != nil && strings.TrimSpace(record[26]) != "" {
-		errors = append(errors, "预计转介费格式错误")
-		expectedFee = 0
+	expectedFee := 0.0
+	if strings.TrimSpace(record[26]) != "" {
+		if val, err := strconv.ParseFloat(strings.TrimSpace(record[26]), 64); err != nil {
+			errors = append(errors, "预计转介费格式错误")
+		} else {
+			expectedFee = val
+		}
 	}
 
 	if len(errors) > 0 {
@@ -832,7 +863,7 @@ func (s *PolicyService) validateAndConvertPolicyRecord(record []string, rowNum i
 		Remark:            strings.TrimSpace(record[32]),
 	}
 
-	// 处理日期字段
+	// 处理日期字段（只处理有值的字段）
 	if strings.TrimSpace(record[13]) != "" {
 		if date, err := time.Parse("2006-01-02", strings.TrimSpace(record[13])); err == nil {
 			policy.ReferralDate = &date

@@ -21,8 +21,6 @@ import {
   Card,
   Row,
   Col,
-  Statistic,
-  Divider,
   Select,
 } from 'antd';
 import {
@@ -73,6 +71,8 @@ const PolicyManagement: React.FC = () => {
   const [statistics, setStatistics] = useState<PolicyStatistics>();
   const [showStatistics, setShowStatistics] = useState(true);
   const [editingId, setEditingId] = useState<string>('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(20);
   const actionRef = useRef<ActionType>(null);
 
   // 系统配置选项状态
@@ -291,6 +291,8 @@ const PolicyManagement: React.FC = () => {
     if (success && actionRef.current) {
       actionRef.current.reload();
     }
+    // 无论成功还是失败，都关闭导入模态框
+    setImportModalVisible(false);
   };
 
   // 编辑保单 - 先获取详情数据
@@ -673,43 +675,58 @@ const PolicyManagement: React.FC = () => {
     <PageContainer>
       {/* 统计卡片 */}
       {showStatistics && statistics && (
-        <Row gutter={16} style={{ marginBottom: 16 }}>
-          <Col span={6}>
-            <Card>
-              <Statistic title="总保单数" value={statistics.total_policies} />
+        <div style={{ marginBottom: 16 }}>
+          <div style={{ display: 'flex', gap: 16 }}>
+            <Card size="small" style={{ flex: 1 }}>
+              <div style={{ textAlign: 'center' }}>
+                <div style={{ fontSize: 24, fontWeight: 'bold', color: '#1890ff' }}>
+                  {statistics.total_policies || 0}
+                </div>
+                <div>总保单数</div>
+              </div>
             </Card>
-          </Col>
-          <Col span={6}>
-            <Card>
-              <Statistic
-                title="总保费"
-                value={statistics.total_premium}
-                precision={2}
-                suffix="万"
-              />
+            <Card size="small" style={{ flex: 1 }}>
+              <div style={{ textAlign: 'center' }}>
+                <div style={{ fontSize: 24, fontWeight: 'bold', color: '#52c41a' }}>
+                  {(statistics.total_premium / 10000).toFixed(2)}
+                </div>
+                <div>总保费(万)</div>
+              </div>
             </Card>
-          </Col>
-          <Col span={6}>
-            <Card>
-              <Statistic
-                title="总AUM"
-                value={statistics.total_aum}
-                precision={2}
-                suffix="万"
-              />
+            <Card size="small" style={{ flex: 1 }}>
+              <div style={{ textAlign: 'center' }}>
+                <div style={{ fontSize: 24, fontWeight: 'bold', color: '#f5222d' }}>
+                  {(statistics.total_aum / 10000).toFixed(2)}
+                </div>
+                <div>总AUM(万)</div>
+              </div>
             </Card>
-          </Col>
-          <Col span={6}>
-            <Card>
-              <Statistic
-                title="预计转介费"
-                value={statistics.total_expected_fee}
-                precision={2}
-                suffix="万"
-              />
+            <Card size="small" style={{ flex: 1 }}>
+              <div style={{ textAlign: 'center' }}>
+                <div style={{ fontSize: 24, fontWeight: 'bold', color: '#722ed1' }}>
+                  {(statistics.total_expected_fee / 10000).toFixed(2)}
+                </div>
+                <div>预计转介费(万)</div>
+              </div>
             </Card>
-          </Col>
-        </Row>
+            <Card size="small" style={{ flex: 1 }}>
+              <div style={{ textAlign: 'center' }}>
+                <div style={{ fontSize: 24, fontWeight: 'bold', color: '#fa8c16' }}>
+                  {statistics.surrendered_count || 0}
+                </div>
+                <div>退保保单</div>
+              </div>
+            </Card>
+            <Card size="small" style={{ flex: 1 }}>
+              <div style={{ textAlign: 'center' }}>
+                <div style={{ fontSize: 24, fontWeight: 'bold', color: '#13c2c2' }}>
+                  {statistics.paid_commission_count || 0}
+                </div>
+                <div>已付佣金</div>
+              </div>
+            </Card>
+          </div>
+        </div>
       )}
 
       {/* 保单表格 */}
@@ -719,8 +736,6 @@ const PolicyManagement: React.FC = () => {
         rowKey="id"
         search={{
           labelWidth: 120,
-          collapsed: false,
-          collapseRender: () => null,
         }}
         // 添加列设置功能
         columnsState={{
@@ -780,10 +795,12 @@ const PolicyManagement: React.FC = () => {
             page: params.current || 1,
             page_size: params.pageSize || 20,
             account_number: params.account_number,
+            customer_number: params.customer_number,
             customer_name_cn: params.customer_name_cn,
             proposal_number: params.proposal_number,
             policy_currency: params.policy_currency,
             partner: params.partner,
+            product_name: params.product_name,
             is_surrendered: params.is_surrendered,
             past_cooling_period: params.past_cooling_period,
             is_paid_commission: params.is_paid_commission,
@@ -810,6 +827,12 @@ const PolicyManagement: React.FC = () => {
           onChange: (_, selectedRows) => {
             setSelectedRows(selectedRows);
           },
+        }}
+        onChange={(pagination, filters, sorter) => {
+          // 处理分页变化
+          console.log('分页变化:', pagination);
+          setCurrentPage(pagination.current || 1);
+          setPageSize(pagination.pageSize || 20);
         }}
         tableAlertRender={({ selectedRowKeys, onCleanSelected }) => (
           <Space size={24}>
@@ -848,9 +871,11 @@ const PolicyManagement: React.FC = () => {
         )}
         scroll={{ x: 3500 }}
         pagination={{
-          pageSize: 20,
+          current: currentPage,
+          pageSize: pageSize,
           showQuickJumper: true,
           showSizeChanger: true,
+          pageSizeOptions: [10, 20, 50, 100],
           showTotal: (total, range) =>
             `第 ${range[0]}-${range[1]} 条/总共 ${total} 条`,
         }}
