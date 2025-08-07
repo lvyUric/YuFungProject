@@ -82,7 +82,7 @@ function Stop-Containers {
     Write-Step "停止现有容器..."
     
     try {
-        docker-compose -f docker-compose.prod.yml down --remove-orphans
+        docker-compose down --remove-orphans
         Write-Info "现有容器已停止"
     }
     catch {
@@ -109,7 +109,7 @@ function Build-Images {
     if (!$SkipBuild) {
         Write-Step "构建Docker镜像..."
         try {
-            docker-compose -f docker-compose.prod.yml build --no-cache
+            docker-compose build --no-cache
             Write-Info "镜像构建完成"
         }
         catch {
@@ -126,7 +126,7 @@ function Build-Images {
 function Start-Services {
     Write-Step "启动服务..."
     try {
-        docker-compose -f docker-compose.prod.yml up -d
+        docker-compose up -d
         Write-Info "服务启动完成"
     }
     catch {
@@ -173,10 +173,10 @@ function Show-Info {
     Write-Host "💾 数据库地址: mongodb://${ServerIP}:27017" -ForegroundColor $Green
     Write-Host ""
     Write-Host "📋 常用命令：" -ForegroundColor $Blue
-    Write-Host "  查看服务状态: docker-compose -f docker-compose.prod.yml ps"
-    Write-Host "  查看服务日志: docker-compose -f docker-compose.prod.yml logs -f"
-    Write-Host "  停止服务: docker-compose -f docker-compose.prod.yml down"
-    Write-Host "  重启服务: docker-compose -f docker-compose.prod.yml restart"
+    Write-Host "  查看服务状态: docker-compose ps"
+    Write-Host "  查看服务日志: docker-compose logs -f"
+    Write-Host "  停止服务: docker-compose down"
+    Write-Host "  重启服务: docker-compose restart"
     Write-Host ""
 }
 

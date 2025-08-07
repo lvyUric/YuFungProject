@@ -22,8 +22,8 @@ RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main ./cmd/main.g
 # 使用轻量级的alpine镜像作为运行环境
 FROM alpine:latest
 
-# 安装ca-certificates和tzdata
-RUN apk --no-cache add ca-certificates tzdata
+# 安装ca-certificates、tzdata和网络测试工具
+RUN apk --no-cache add ca-certificates tzdata curl wget netcat-openbsd
 
 # 设置时区
 ENV TZ=Asia/Shanghai
@@ -44,6 +44,10 @@ COPY --from=builder /app/main .
 
 # 复制配置文件
 COPY --from=builder /app/configs ./configs
+
+# 复制网络测试脚本
+COPY test-mongodb-from-container.sh /app/
+RUN chmod +x /app/test-mongodb-from-container.sh
 
 # 切换到非root用户
 USER appuser

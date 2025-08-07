@@ -13,6 +13,9 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
+# 服务器IP地址
+SERVER_IP="106.52.172.124"
+
 # 日志函数
 log_info() {
     echo -e "${GREEN}[INFO]${NC} $1"
@@ -56,21 +59,21 @@ create_directories() {
 # 停止现有容器
 stop_containers() {
     log_step "停止现有容器..."
-    docker-compose -f docker-compose.prod.yml down --remove-orphans || true
+    docker-compose down --remove-orphans || true
     log_info "现有容器已停止"
 }
 
 # 构建镜像
 build_images() {
     log_step "构建Docker镜像..."
-    docker-compose -f docker-compose.prod.yml build --no-cache
+    docker-compose build --no-cache
     log_info "镜像构建完成"
 }
 
 # 启动服务
 start_services() {
     log_step "启动服务..."
-    docker-compose -f docker-compose.prod.yml up -d
+    docker-compose up -d
     log_info "服务启动完成"
 }
 
@@ -80,14 +83,14 @@ check_services() {
     sleep 10
     
     # 检查后端服务
-    if curl -f http://localhost:8088/health > /dev/null 2>&1; then
+    if curl -f http://${SERVER_IP}:8088/health > /dev/null 2>&1; then
         log_info "✅ 后端服务运行正常"
     else
         log_warn "⚠️  后端服务可能未完全启动，请稍后检查"
     fi
     
     # 检查前端服务
-    if curl -f http://localhost:80/health > /dev/null 2>&1; then
+    if curl -f http://${SERVER_IP}/health > /dev/null 2>&1; then
         log_info "✅ 前端服务运行正常"
     else
         log_warn "⚠️  前端服务可能未完全启动，请稍后检查"
@@ -98,16 +101,16 @@ check_services() {
 show_info() {
     log_step "部署完成！服务信息如下："
     echo ""
-    echo "🌐 前端访问地址: http://localhost"
-    echo "🔧 后端API地址: http://localhost:8088"
-    echo "📖 API文档地址: http://localhost:8088/swagger/index.html"
-    echo "💾 数据库地址: mongodb://106.52.172.124:27017"
+    echo "🌐 前端访问地址: http://${SERVER_IP}"
+    echo "🔧 后端API地址: http://${SERVER_IP}:8088"
+    echo "📖 API文档地址: http://${SERVER_IP}:8088/swagger/index.html"
+    echo "💾 数据库地址: mongodb://${SERVER_IP}:27017"
     echo ""
     echo "📋 常用命令："
-    echo "  查看服务状态: docker-compose -f docker-compose.prod.yml ps"
-    echo "  查看服务日志: docker-compose -f docker-compose.prod.yml logs -f"
-    echo "  停止服务: docker-compose -f docker-compose.prod.yml down"
-    echo "  重启服务: docker-compose -f docker-compose.prod.yml restart"
+    echo "  查看服务状态: docker-compose ps"
+    echo "  查看服务日志: docker-compose logs -f"
+    echo "  停止服务: docker-compose down"
+    echo "  重启服务: docker-compose restart"
     echo ""
 }
 
