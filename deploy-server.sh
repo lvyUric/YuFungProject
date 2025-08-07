@@ -47,12 +47,6 @@ fi
 echo "开始构建前端Docker镜像..."
 cd Yufung-admin-front
 
-# 检查package-lock.json是否存在
-if [ ! -f "package-lock.json" ]; then
-    echo "❌ package-lock.json 文件不存在，正在生成..."
-    npm install
-fi
-
 docker build \
     --progress=plain \
     --no-cache \

@@ -45,12 +45,6 @@ if ($LASTEXITCODE -eq 0) {
 Write-Host "开始构建前端Docker镜像..." -ForegroundColor Green
 Set-Location Yufung-admin-front
 
-# 检查package-lock.json是否存在
-if (-not (Test-Path "package-lock.json")) {
-    Write-Host "❌ package-lock.json 文件不存在，正在生成..." -ForegroundColor Yellow
-    npm install
-}
-
 docker build `
     --progress=plain `
     --no-cache `
