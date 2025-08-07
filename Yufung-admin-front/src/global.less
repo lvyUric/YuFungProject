@@ -1,0 +1,212 @@
+@font-face {
+  font-family: "AlibabaSans";
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url("//mdn.alipayobjects.com/huamei_iwk9zp/afts/file/A*1GSgSYDD_aIAAAAAQsAAAAgAegCCAQ/AlibabaSans-Light.woff2")
+    format("woff2");
+}
+@font-face {
+  font-family: "AlibabaSans";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("//mdn.alipayobjects.com/huamei_iwk9zp/afts/file/A*2zEUQqnPNesAAAAAQtAAAAgAegCCAQ/AlibabaSans-Regular.woff2")
+    format("woff2");
+}
+@font-face {
+  font-family: "AlibabaSans";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("//mdn.alipayobjects.com/huamei_iwk9zp/afts/file/A*E_cxRbMlZqUAAAAAQuAAAAgAegCCAQ/AlibabaSans-Medium.woff2")
+    format("woff2");
+}
+@font-face {
+  font-family: "AlibabaSans";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("//mdn.alipayobjects.com/huamei_iwk9zp/afts/file/A*E_cxRbMlZqUAAAAAQuAAAAgAegCCAQ/AlibabaSans-Bold.woff2")
+    format("woff2");
+}
+@font-face {
+  font-family: "AlibabaSans";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("//mdn.alipayobjects.com/huamei_iwk9zp/afts/file/A*E_cxRbMlZqUAAAAAQuAAAAgAegCCAQ/AlibabaSans-Heavy.woff2")
+    format("woff2");
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family:
+    AlibabaSans, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans',
+    sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+}
+
+.colorWeak {
+  filter: invert(80%);
+}
+
+.ant-layout {
+  min-height: 100vh;
+}
+.ant-pro-sider.ant-layout-sider.ant-pro-sider-fixed {
+  left: unset;
+}
+
+canvas {
+  display: block;
+}
+
+body {
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+ul,
+ol {
+  list-style: none;
+}
+
+@media (max-width: 768px) {
+  .ant-table {
+    width: 100%;
+    overflow-x: auto;
+    
+    &-thead > tr,
+    &-tbody > tr {
+      > th,
+      > td {
+        white-space: pre;
+        > span {
+          display: block;
+        }
+      }
+    }
+    
+    // 移动端表格优化
+    &-container {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    
+    &-cell {
+      padding: 8px 4px !important;
+      font-size: 12px;
+    }
+    
+    &-thead th {
+      font-size: 12px;
+      font-weight: 600;
+    }
+  }
+  
+  // ProTable在移动端的特殊优化
+  .ant-pro-table {
+    .ant-pro-table-list-toolbar {
+      flex-direction: column;
+      gap: 8px;
+      
+      &-container {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      
+      &-left {
+        margin-bottom: 8px;
+      }
+      
+      &-right {
+        justify-content: flex-start;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+    }
+    
+    .ant-pro-table-search {
+      .ant-form-item {
+        margin-bottom: 8px;
+      }
+    }
+  }
+}
+
+// 平板端优化
+@media (min-width: 768px) and (max-width: 1200px) {
+  .ant-table {
+    &-cell {
+      padding: 12px 8px !important;
+      font-size: 13px;
+    }
+  }
+  
+  .ant-pro-table {
+    .ant-pro-table-list-toolbar-right {
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+  }
+}
+
+// 桌面端表格优化
+@media (min-width: 1200px) {
+  .ant-table {
+    &-container {
+      border-radius: 6px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+    
+    &-cell {
+      transition: background-color 0.2s ease;
+    }
+    
+    &-tbody > tr:hover > td {
+      background: #fafafa;
+    }
+  }
+}
+
+// 表格列设置弹窗样式
+.column-settings-popover {
+  .ant-popover-content {
+    padding: 0;
+  }
+  
+  .column-option-item {
+    padding: 4px 0;
+    display: flex;
+    align-items: center;
+    
+    .ant-checkbox-wrapper {
+      width: 100%;
+      padding: 4px 8px;
+      border-radius: 4px;
+      transition: background-color 0.2s ease;
+      
+      &:hover {
+        background-color: #f5f5f5;
+      }
+    }
+  }
+}
+
+// 表格固定列优化
+.ant-table-ping-left {
+  .ant-table-cell-fix-left {
+    box-shadow: 6px 0 6px -4px rgba(0, 0, 0, 0.15);
+  }
+}
+
+.ant-table-ping-right {
+  .ant-table-cell-fix-right {
+    box-shadow: -6px 0 6px -4px rgba(0, 0, 0, 0.15);
+  }
+}

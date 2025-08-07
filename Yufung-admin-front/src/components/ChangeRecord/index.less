@@ -1,0 +1,553 @@
+.changeRecordCard {
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  background: white;
+  overflow: hidden;
+  
+  .ant-card-head {
+    background: #fafafa;
+    border-bottom: 1px solid #e8e8e8;
+    border-radius: 8px 8px 0 0;
+    
+    .ant-card-head-title {
+      color: #262626;
+      font-weight: 600;
+      font-size: 16px;
+    }
+  }
+  
+  .ant-card-body {
+    padding: 20px;
+    background: white;
+  }
+}
+
+// 加载状态美化
+.loadingWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 0;
+  background: white;
+  border-radius: 8px;
+}
+
+// 空状态美化
+.emptyWrapper {
+  background: white;
+  border-radius: 8px;
+  
+  .ant-empty {
+    .ant-empty-image {
+      margin-bottom: 16px;
+      
+      svg {
+        fill: #f0f0f0;
+        width: 100px;
+        height: 100px;
+      }
+    }
+  }
+}
+
+.emptyDetails {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: #f9f9f9;
+  border-radius: 6px;
+  border: 1px dashed #d9d9d9;
+  color: #8c8c8c;
+}
+
+// 时间线容器
+.timelineWrapper {
+  position: relative;
+  
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: #f5f5f5;
+    border-radius: 2px;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: #d9d9d9;
+    border-radius: 2px;
+    
+    &:hover {
+      background: #bfbfbf;
+    }
+  }
+}
+
+.changeTimeline {
+  padding: 16px 0;
+  
+  .ant-timeline-item {
+    padding-bottom: 20px;
+    
+    &:last-child {
+      padding-bottom: 0;
+    }
+  }
+  
+  .ant-timeline-item-tail {
+    border-left: 1px solid #e8e8e8;
+    width: 1px;
+  }
+  
+  .ant-timeline-item-head {
+    background: white;
+    border: 2px solid #1890ff;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+  }
+}
+
+.timelineDot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #1890ff;
+  border: 2px solid white;
+  box-shadow: 0 2px 8px rgba(24, 144, 255, 0.2);
+  transition: all 0.2s ease;
+  
+  &:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(24, 144, 255, 0.3);
+  }
+  
+  .anticon {
+    color: white;
+    font-size: 10px;
+    font-weight: bold;
+  }
+}
+
+.changeCard {
+  border: 1px solid #e8e8e8;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  background: white;
+  transition: all 0.2s ease;
+  margin-left: 12px;
+  
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transform: translateY(-1px);
+    border-color: #1890ff;
+  }
+  
+  .ant-card-body {
+    padding: 16px;
+  }
+}
+
+.changeHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #f0f0f0;
+  
+  .ant-space {
+    flex-wrap: wrap;
+    gap: 6px 8px;
+  }
+  
+  .ant-tag {
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-weight: 500;
+    font-size: 12px;
+    
+    &[color="success"] {
+      background: #f6ffed;
+      border-color: #b7eb8f;
+      color: #52c41a;
+    }
+    
+    &[color="processing"] {
+      background: #e6f7ff;
+      border-color: #91d5ff;
+      color: #1890ff;
+    }
+    
+    &[color="error"] {
+      background: #fff2f0;
+      border-color: #ffadd2;
+      color: #ff4d4f;
+    }
+    
+    &[color="default"] {
+      background: #fafafa;
+      border-color: #d9d9d9;
+      color: #666;
+    }
+  }
+  
+  .ant-typography {
+    font-weight: 500;
+    color: #262626;
+    
+    &.ant-typography-caption {
+      color: #8c8c8c;
+      font-size: 12px;
+    }
+  }
+}
+
+// 标签样式
+.typeTag {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+// 用户信息样式
+.userInfo {
+  background: #f0f9ff;
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 1px solid #e6f7ff;
+  
+  .ant-typography {
+    color: #1890ff;
+    font-size: 12px;
+  }
+}
+
+// 时间信息样式
+.timeInfo {
+  background: #f5f5f5;
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 1px solid #e8e8e8;
+}
+
+.relativeTime {
+  font-size: 12px;
+  font-weight: 500;
+  color: #8c8c8c;
+}
+
+// IP信息样式
+.ipInfo {
+  background: #f5f5f5;
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 1px solid #e8e8e8;
+}
+
+.ipText {
+  font-size: 12px;
+  font-family: 'Consolas', 'Monaco', monospace;
+  color: #8c8c8c;
+}
+
+.changeContent {
+  margin-bottom: 12px;
+}
+
+.changeDetails {
+  .changeItem {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 8px;
+    padding: 8px 12px;
+    background: #fafafa;
+    border-radius: 4px;
+    border-left: 3px solid #1890ff;
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
+    
+    .ant-typography {
+      margin-right: 8px;
+      min-width: 80px;
+      color: #595959;
+      font-size: 13px;
+    }
+  }
+  
+  .changeValue {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 4px;
+    
+    .ant-typography {
+      font-size: 13px;
+      
+      &.ant-typography-delete {
+        background: #fff2f0;
+        padding: 1px 4px;
+        border-radius: 3px;
+        text-decoration: line-through;
+        color: #ff4d4f;
+        border: 1px solid #ffadd2;
+      }
+      
+      &.ant-typography-mark {
+        background: #f6ffed;
+        color: #52c41a;
+        padding: 1px 6px;
+        border-radius: 3px;
+        font-weight: 500;
+        border: 1px solid #b7eb8f;
+      }
+    }
+  }
+}
+
+// 字段标签美化
+.fieldLabel {
+  display: inline-block;
+  background: #1890ff;
+  color: white;
+  padding: 1px 6px;
+  border-radius: 3px;
+  font-size: 12px;
+  font-weight: 600;
+  margin-right: 8px;
+  min-width: 60px;
+  text-align: center;
+}
+
+// 值样式
+.oldValue {
+  background: #fff2f0;
+  padding: 1px 4px;
+  border-radius: 3px;
+  font-size: 12px;
+  border: 1px solid #ffadd2;
+}
+
+.newValue {
+  background: #f6ffed;
+  color: #52c41a;
+  padding: 1px 6px;
+  border-radius: 3px;
+  font-weight: 500;
+  font-size: 12px;
+  border: 1px solid #b7eb8f;
+}
+
+.arrow {
+  font-weight: bold;
+  color: #1890ff;
+  margin: 0 4px;
+}
+
+.changeReason {
+  margin-top: 8px;
+  padding: 8px 12px;
+  background: #f0f9ff;
+  border-radius: 4px;
+  border-left: 3px solid #1890ff;
+  
+  .ant-typography {
+    font-size: 12px;
+    color: #666;
+    font-style: italic;
+    margin: 0;
+  }
+}
+
+// 原因文本样式
+.reasonText {
+  color: #666;
+  font-style: italic;
+  font-size: 12px;
+  line-height: 1.5;
+  margin-top: 4px;
+  display: block;
+}
+
+.loadMoreContainer {
+  text-align: center;
+  margin-top: 20px;
+  padding: 16px 0;
+  border-top: 1px dashed #e8e8e8;
+}
+
+.loadMoreButton {
+  color: #1890ff;
+  font-weight: 500;
+  border-radius: 6px;
+  padding: 6px 16px;
+  height: auto;
+  border: 1px solid #1890ff;
+  background: white;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    background: #1890ff;
+    color: white;
+    box-shadow: 0 2px 4px rgba(24, 144, 255, 0.3);
+  }
+  
+  &:focus {
+    background: #1890ff;
+    color: white;
+    border-color: #1890ff;
+  }
+}
+
+.noMoreContainer {
+  text-align: center;
+  margin-top: 16px;
+  padding: 16px 0;
+  border-top: 1px dashed #e8e8e8;
+  
+  .ant-typography {
+    color: #bfbfbf;
+    font-size: 12px;
+    font-style: italic;
+  }
+}
+
+// 空状态美化
+.ant-empty {
+  .ant-empty-image {
+    margin-bottom: 16px;
+    
+    svg {
+      fill: #f0f0f0;
+    }
+  }
+  
+  .ant-empty-description {
+    color: #8c8c8c;
+    font-size: 14px;
+    margin-bottom: 16px;
+  }
+}
+
+// 加载状态美化
+.ant-spin {
+  .ant-spin-dot {
+    .ant-spin-dot-item {
+      background-color: #1890ff;
+    }
+  }
+  
+  .ant-spin-text {
+    color: #1890ff;
+    font-weight: 500;
+  }
+}
+
+// 动画效果 - 简化动画
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.changeCard {
+  animation: fadeIn 0.3s ease;
+}
+
+.ant-timeline-item {
+  animation: fadeIn 0.3s ease;
+  
+  &:nth-child(2) { animation-delay: 0.1s; }
+  &:nth-child(3) { animation-delay: 0.2s; }
+  &:nth-child(4) { animation-delay: 0.3s; }
+  &:nth-child(5) { animation-delay: 0.4s; }
+}
+
+// 响应式设计
+@media (max-width: 768px) {
+  .changeCard {
+    margin-left: 8px;
+    
+    .ant-card-body {
+      padding: 12px;
+    }
+  }
+  
+  .changeHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    
+    .ant-space {
+      width: 100%;
+      justify-content: space-between;
+    }
+  }
+  
+  .changeDetails {
+    .changeItem {
+      flex-direction: column;
+      gap: 4px;
+      
+      .ant-typography {
+        min-width: auto;
+        margin-right: 0;
+        margin-bottom: 4px;
+      }
+    }
+  }
+  
+  .timelineDot {
+    width: 20px;
+    height: 20px;
+    
+    .anticon {
+      font-size: 8px;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .changeDetails {
+    .changeItem {
+      padding: 6px 8px;
+    }
+  }
+  
+  .fieldLabel {
+    font-size: 11px;
+    padding: 1px 4px;
+    min-width: 50px;
+  }
+  
+  .userInfo,
+  .timeInfo,
+  .ipInfo {
+    padding: 1px 4px;
+    
+    .ant-typography {
+      font-size: 11px;
+    }
+  }
+  
+  .changeRecordCard {
+    .ant-card-body {
+      padding: 16px 12px;
+    }
+  }
+} 

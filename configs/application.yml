@@ -1,0 +1,48 @@
+# 服务配置
+server:
+  port: 8088
+  mode: debug # release, debug, test
+
+# 数据库配置
+database:
+  mongodb:
+    uri: mongodb://admin:yf2025@106.52.172.124:27017/insurance_db?authSource=admin
+    database: insurance_db
+    timeout: 10s
+    max_pool_size: 100
+
+# Redis配置
+redis:
+  addr: localhost:6379
+  password: ""
+  db: 0
+  pool_size: 10
+
+# JWT配置
+jwt:
+  secret: yf2025
+  expires_in: 24h
+  refresh_expires_in: 168h
+  
+# 日志配置
+log:
+  level: debug            # 日志级别: debug, info, warn, error
+  format: text           # 日志格式: json, text
+  output: both           # 输出方式: stdout, file, both
+  file_path: ./logs/insurance_system.log  # 日志文件路径
+  max_size: 50           # 单个日志文件最大大小(MB)
+  max_age: 30            # 日志文件保留天数
+  max_backups: 10        # 最大备份文件数量
+  compress: true         # 是否压缩旧日志文件
+
+# 文件上传配置
+upload:
+  max_size: 10MB
+  allowed_types: [jpg, jpeg, png, gif, pdf, doc, docx, xls, xlsx]
+  path: ./uploads
+
+# 安全配置
+security:
+  password_min_length: 8
+  max_login_attempts: 5
+  lockout_duration: 30m 

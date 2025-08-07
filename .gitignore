@@ -1,0 +1,118 @@
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+main
+main.exe
+
+# Test binary, built with `go test -c`
+*.test
+
+# Output of the go coverage tool, specifically when used with LiteIDE
+*.out
+
+# Dependency directories (remove the comment below to include it)
+# vendor/
+
+# Go workspace file
+go.work
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Node.js dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
+
+# Frontend build artifacts
+/Yufung-admin-front/dist/
+/Yufung-admin-front/build/
+/Yufung-admin-front/.next/
+/Yufung-admin-front/out/
+
+# Exclude stelory-admin directory completely
+stelory-admin/
+
+# Log files
+*.log
+logs/
+
+# Environment files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.temp
+
+# Build directories
+build/
+dist/
+
+# Coverage reports
+coverage/
+*.cover
+*.coverage
+
+# Backup files
+*.backup
+*.bak
+*.orig
+
+# Configuration files with sensitive data
+config/local.yml
+config/production.yml
+configs/local.yml
+configs/production.yml
+
+# Frontend specific ignores
+Yufung-admin-front/node_modules/
+Yufung-admin-front/.umi/
+Yufung-admin-front/.umi-production/
+Yufung-admin-front/.env
+Yufung-admin-front/.env.local
+Yufung-admin-front/.env.development.local
+Yufung-admin-front/.env.test.local
+Yufung-admin-front/.env.production.local
+
+# Test files
+test/
+tests/
+*.test.js
+*.test.ts
+*.test.jsx
+*.test.tsx
+
+# Documentation files that might contain sensitive info
+*.md
+!README.md
+!YfProject.md

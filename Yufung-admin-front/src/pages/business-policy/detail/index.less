@@ -1,0 +1,353 @@
+.pageContainer {
+  background: #f8fafb;
+  min-height: 100vh;
+  
+  .ant-page-header {
+    background: white;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e8e8e8;
+  }
+}
+
+.pageHeader {
+  display: flex;
+  align-items: center;
+  
+  .backButton {
+    display: flex;
+    align-items: center;
+    padding: 8px 16px;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    color: #666;
+    
+    &:hover {
+      background: #f5f5f5;
+      color: #1890ff;
+    }
+  }
+  
+  .titleSection {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    
+    .titleAvatar {
+      background: #1890ff;
+      border: 2px solid #e6f7ff;
+    }
+  }
+}
+
+.editButton {
+  background: #1890ff;
+  border: none;
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(24, 144, 255, 0.2);
+  transition: all 0.2s ease;
+  
+  &:hover {
+    background: #40a9ff;
+    box-shadow: 0 4px 8px rgba(24, 144, 255, 0.3);
+  }
+}
+
+.tabItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+  color: #666;
+  
+  .anticon {
+    font-size: 16px;
+  }
+}
+
+.contentContainer {
+  padding: 20px;
+}
+
+.overviewCard {
+  background: white;
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  margin-bottom: 20px;
+  overflow: hidden;
+  position: relative;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #1890ff 0%, #40a9ff 100%);
+  }
+  
+  .ant-card-body {
+    padding: 24px;
+  }
+  
+  .ant-statistic {
+    .ant-statistic-title {
+      color: #8c8c8c;
+      font-size: 14px;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+    
+    .ant-statistic-content {
+      color: #262626;
+      font-weight: 600;
+      font-size: 20px;
+    }
+  }
+  
+  .statusItem {
+    .ant-typography {
+      color: #8c8c8c;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+    
+    .ant-badge {
+      .ant-badge-status-text {
+        color: #262626;
+        font-weight: 500;
+      }
+    }
+  }
+}
+
+.infoCard {
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e8e8e8;
+  transition: all 0.2s ease;
+  background: white;
+  
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transform: translateY(-1px);
+  }
+  
+  .ant-card-head {
+    background: #fafafa;
+    border-bottom: 1px solid #e8e8e8;
+    border-radius: 8px 8px 0 0;
+    
+    .ant-card-head-title {
+      font-weight: 600;
+      color: #262626;
+      font-size: 15px;
+    }
+  }
+  
+  .ant-card-body {
+    padding: 20px;
+  }
+}
+
+.cardIcon {
+  color: #1890ff;
+  font-size: 16px;
+  margin-right: 8px;
+}
+
+.customerName {
+  color: #262626;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.premiumAmount {
+  color: #52c41a;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.aumAmount {
+  color: #1890ff;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.remarkContent {
+  background: #f9f9f9;
+  padding: 12px 16px;
+  border-radius: 6px;
+  border-left: 3px solid #1890ff;
+  color: #666;
+  line-height: 1.6;
+  font-size: 14px;
+}
+
+.loadingContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 0;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.emptyCard {
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.emptyContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 0;
+  
+  .emptyIcon {
+    font-size: 48px;
+    color: #bfbfbf;
+    margin-bottom: 16px;
+  }
+}
+
+// 美化描述列表
+.ant-descriptions {
+  .ant-descriptions-item-label {
+    font-weight: 600;
+    color: #595959;
+    background: #f8f8f8;
+    padding: 6px 10px;
+    border-radius: 4px;
+    margin-bottom: 2px;
+    font-size: 13px;
+    border: 1px solid #f0f0f0;
+  }
+  
+  .ant-descriptions-item-content {
+    padding: 6px 10px;
+    font-weight: 500;
+    color: #262626;
+    font-size: 14px;
+  }
+}
+
+// 美化标签
+.ant-tag {
+  border-radius: 4px;
+  padding: 2px 8px;
+  font-weight: 500;
+  font-size: 12px;
+  
+  &.ant-tag-blue {
+    background: #e6f7ff;
+    border-color: #91d5ff;
+    color: #1890ff;
+  }
+  
+  &.ant-tag-green {
+    background: #f6ffed;
+    border-color: #b7eb8f;
+    color: #52c41a;
+  }
+  
+  &.ant-tag-red {
+    background: #fff2f0;
+    border-color: #ffadd2;
+    color: #ff4d4f;
+  }
+  
+  &.ant-tag-processing {
+    background: #e6f7ff;
+    border-color: #91d5ff;
+    color: #1890ff;
+  }
+}
+
+// 美化徽章
+.ant-badge {
+  .ant-badge-status-dot {
+    width: 8px;
+    height: 8px;
+  }
+  
+  .ant-badge-status-success {
+    background: #52c41a;
+  }
+  
+  .ant-badge-status-default {
+    background: #d9d9d9;
+  }
+}
+
+// 统计卡片特殊样式
+.ant-statistic {
+  &.premium-stat {
+    .ant-statistic-content {
+      color: #52c41a;
+    }
+  }
+  
+  &.aum-stat {
+    .ant-statistic-content {
+      color: #1890ff;
+    }
+  }
+}
+
+// 响应式设计
+@media (max-width: 1200px) {
+  .contentContainer {
+    padding: 16px;
+  }
+  
+  .overviewCard {
+    .ant-card-body {
+      padding: 20px 16px;
+    }
+    
+    .ant-statistic-content {
+      font-size: 18px;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .pageHeader {
+    .titleSection {
+      .titleAvatar {
+        display: none;
+      }
+    }
+  }
+  
+  .overviewCard {
+    .ant-row {
+      .ant-col {
+        margin-bottom: 16px;
+      }
+    }
+  }
+  
+  .infoCard {
+    margin-bottom: 16px;
+    
+    .ant-card-body {
+      padding: 16px;
+    }
+  }
+  
+  .ant-descriptions {
+    .ant-descriptions-item-label,
+    .ant-descriptions-item-content {
+      padding: 4px 8px;
+      font-size: 12px;
+    }
+  }
+} 

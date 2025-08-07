@@ -1,0 +1,475 @@
+definitions:
+  YufungProject_internal_model.ChangePasswordRequest:
+    properties:
+      new_password:
+        description: 新密码
+        minLength: 8
+        type: string
+      old_password:
+        description: 当前密码
+        type: string
+    required:
+    - new_password
+    - old_password
+    type: object
+  YufungProject_internal_model.LoginRequest:
+    properties:
+      password:
+        description: 密码
+        type: string
+      username:
+        description: 用户名
+        type: string
+    required:
+    - password
+    - username
+    type: object
+  YufungProject_internal_model.LoginResponse:
+    properties:
+      expires_at:
+        description: 令牌过期时间
+        type: string
+      refresh_token:
+        description: 刷新令牌
+        type: string
+      token:
+        description: 访问令牌
+        type: string
+      user:
+        allOf:
+        - $ref: '#/definitions/YufungProject_internal_model.UserInfo'
+        description: 用户信息
+    type: object
+  YufungProject_internal_model.RefreshTokenRequest:
+    properties:
+      refresh_token:
+        description: 刷新令牌
+        type: string
+    required:
+    - refresh_token
+    type: object
+  YufungProject_internal_model.RegisterRequest:
+    properties:
+      display_name:
+        description: 显示名称
+        maxLength: 100
+        minLength: 2
+        type: string
+      email:
+        description: 邮箱地址
+        type: string
+      password:
+        description: 密码
+        minLength: 8
+        type: string
+      phone:
+        description: 手机号码
+        type: string
+      username:
+        description: 用户名
+        maxLength: 50
+        minLength: 3
+        type: string
+    required:
+    - display_name
+    - password
+    - username
+    type: object
+  YufungProject_internal_model.Response:
+    properties:
+      code:
+        description: 状态码
+        type: integer
+      data:
+        description: 响应数据
+      message:
+        description: 响应消息
+        type: string
+      trace_id:
+        description: 追踪ID
+        type: string
+    type: object
+  YufungProject_internal_model.UserInfo:
+    properties:
+      company_id:
+        description: 所属公司ID
+        type: string
+      display_name:
+        description: 显示名称
+        type: string
+      email:
+        description: 邮箱地址
+        type: string
+      id:
+        description: 用户ID
+        type: string
+      last_login:
+        description: 最后登录时间
+        type: string
+      phone:
+        description: 手机号码
+        type: string
+      role_ids:
+        description: 角色ID数组
+        items:
+          type: string
+        type: array
+      status:
+        description: 用户状态
+        type: string
+      user_id:
+        description: 用户唯一标识
+        type: string
+      username:
+        description: 用户名
+        type: string
+    type: object
+info:
+  contact: {}
+  description: 基于Gin + MongoDB构建的保险经纪公司管理平台
+  title: 保险经纪管理系统API
+  version: "1.0"
+paths:
+  /auth/change-password:
+    post:
+      consumes:
+      - application/json
+      description: 用户修改密码，需要提供当前密码和新密码
+      parameters:
+      - description: Bearer JWT令牌
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 修改密码请求参数
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/YufungProject_internal_model.ChangePasswordRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 密码修改成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/YufungProject_internal_model.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "400":
+          description: 请求参数错误
+          schema:
+            allOf:
+            - $ref: '#/definitions/YufungProject_internal_model.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "401":
+          description: 未登录或token无效
+          schema:
+            allOf:
+            - $ref: '#/definitions/YufungProject_internal_model.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "403":
+          description: 当前密码错误
+          schema:
+            allOf:
+            - $ref: '#/definitions/YufungProject_internal_model.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: 服务器内部错误
+          schema:
+            allOf:
+            - $ref: '#/definitions/YufungProject_internal_model.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      security:
+      - BearerAuth: []
+      summary: 修改密码
+      tags:
+      - 认证管理
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      description: 使用用户名和密码进行登录认证，返回JWT令牌
+      parameters:
+      - description: 登录请求参数
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/YufungProject_internal_model.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 登录成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/YufungProject_internal_model.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/YufungProject_internal_model.LoginResponse'
+              type: object
+        "400":
+          description: 请求参数错误
+          schema:
+            allOf:
+            - $ref: '#/definitions/YufungProject_internal_model.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "401":
+          description: 认证失败
+          schema:
+            allOf:
+            - $ref: '#/definitions/YufungProject_internal_model.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "423":
+          description: 账户被锁定
+          schema:
+            allOf:
+            - $ref: '#/definitions/YufungProject_internal_model.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: 服务器内部错误
+          schema:
+            allOf:
+            - $ref: '#/definitions/YufungProject_internal_model.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: 用户登录
+      tags:
+      - 认证管理
+  /auth/logout:
+    post:
+      consumes:
+      - application/json
+      description: 用户退出登录，清除相关状态
+      parameters:
+      - description: Bearer JWT令牌
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 登出成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/YufungProject_internal_model.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "401":
+          description: 未登录或token无效
+          schema:
+            allOf:
+            - $ref: '#/definitions/YufungProject_internal_model.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: 服务器内部错误
+          schema:
+            allOf:
+            - $ref: '#/definitions/YufungProject_internal_model.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      security:
+      - BearerAuth: []
+      summary: 用户登出
+      tags:
+      - 认证管理
+  /auth/refresh:
+    post:
+      consumes:
+      - application/json
+      description: 使用刷新令牌获取新的访问令牌
+      parameters:
+      - description: 刷新令牌请求参数
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/YufungProject_internal_model.RefreshTokenRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 令牌刷新成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/YufungProject_internal_model.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/YufungProject_internal_model.LoginResponse'
+              type: object
+        "400":
+          description: 请求参数错误
+          schema:
+            allOf:
+            - $ref: '#/definitions/YufungProject_internal_model.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "401":
+          description: 刷新令牌无效或已过期
+          schema:
+            allOf:
+            - $ref: '#/definitions/YufungProject_internal_model.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: 服务器内部错误
+          schema:
+            allOf:
+            - $ref: '#/definitions/YufungProject_internal_model.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: 刷新访问令牌
+      tags:
+      - 认证管理
+  /auth/register:
+    post:
+      consumes:
+      - application/json
+      description: 创建新用户账户，需要提供用户名、密码等基本信息
+      parameters:
+      - description: 注册请求参数
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/YufungProject_internal_model.RegisterRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: 注册成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/YufungProject_internal_model.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/YufungProject_internal_model.UserInfo'
+              type: object
+        "400":
+          description: 请求参数错误
+          schema:
+            allOf:
+            - $ref: '#/definitions/YufungProject_internal_model.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "409":
+          description: 用户名或邮箱已存在
+          schema:
+            allOf:
+            - $ref: '#/definitions/YufungProject_internal_model.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: 服务器内部错误
+          schema:
+            allOf:
+            - $ref: '#/definitions/YufungProject_internal_model.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: 用户注册
+      tags:
+      - 认证管理
+  /auth/user-info:
+    get:
+      consumes:
+      - application/json
+      description: 获取当前登录用户的详细信息
+      parameters:
+      - description: Bearer JWT令牌
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 获取成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/YufungProject_internal_model.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/YufungProject_internal_model.UserInfo'
+              type: object
+        "401":
+          description: 未登录或token无效
+          schema:
+            allOf:
+            - $ref: '#/definitions/YufungProject_internal_model.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "404":
+          description: 用户不存在
+          schema:
+            allOf:
+            - $ref: '#/definitions/YufungProject_internal_model.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: 服务器内部错误
+          schema:
+            allOf:
+            - $ref: '#/definitions/YufungProject_internal_model.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      security:
+      - BearerAuth: []
+      summary: 获取当前用户信息
+      tags:
+      - 认证管理
+swagger: "2.0"
