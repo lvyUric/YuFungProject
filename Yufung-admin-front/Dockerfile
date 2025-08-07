@@ -28,7 +28,7 @@ COPY nginx.conf /etc/nginx/nginx.conf
 # 从builder阶段复制构建产物
 COPY --from=builder /app/dist /usr/share/nginx/html
 
-# 设置权限（使用现有的nginx用户）
+# 设置权限（使用nginx用户）
 RUN chown -R nginx:nginx /usr/share/nginx/html && \
     chown -R nginx:nginx /var/cache/nginx && \
     chown -R nginx:nginx /var/log/nginx && \
@@ -39,12 +39,12 @@ RUN chown -R nginx:nginx /usr/share/nginx/html && \
 # 切换到nginx用户
 USER nginx
 
-# 暴露端口
-EXPOSE 80
+# 暴露端口（使用非特权端口）
+EXPOSE 8080
 
 # 健康检查
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-    CMD wget --no-verbose --tries=1 --spider http://localhost:80 || exit 1
+    CMD wget --no-verbose --tries=1 --spider http://localhost:8080 || exit 1
 
 # 启动nginx
 CMD ["nginx", "-g", "daemon off;"] 

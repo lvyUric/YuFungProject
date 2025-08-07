@@ -57,7 +57,7 @@ docker run -d \
     --name yufung-frontend \
     --network yufung-network \
     --restart unless-stopped \
-    -p 80:80 \
+    -p 8080:8080 \
     -e TZ=Asia/Shanghai \
     yufung-frontend:latest || { echo "❌ 前端启动失败"; exit 1; }
 
@@ -74,5 +74,5 @@ docker ps | grep yufung
 echo ""
 echo "🎉 快速部署完成！"
 echo "📍 后端: http://localhost:8088"
-echo "📍 前端: http://localhost:80"
+echo "📍 前端: http://localhost:8080"
 echo "🔍 健康检查: http://localhost:8088/health" 
