@@ -308,4 +308,6 @@ export const request: RequestConfig = {
   baseURL: 'http://106.52.172.124:8088',
   ...errorConfig,
 };
+
+// 添加调试日志
 console.log('API Base URL:', 'http://106.52.172.124:8088');
