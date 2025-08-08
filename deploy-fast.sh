@@ -30,10 +30,17 @@ docker build \
 
 echo "✅ 后端构建成功"
 
-# 构建前端（使用缓存）
+# 构建前端（强制重新构建，不使用缓存）
 echo "构建前端镜像..."
 cd Yufung-admin-front
-docker build -t yufung-frontend:latest . || { echo "❌ 前端构建失败"; cd ..; exit 1; }
+
+# 清理前端构建缓存
+echo "清理前端构建缓存..."
+rm -rf dist
+rm -rf node_modules/.cache
+
+# 强制重新构建前端镜像，不使用Docker缓存
+docker build --no-cache -t yufung-frontend:latest . || { echo "❌ 前端构建失败"; cd ..; exit 1; }
 cd ..
 
 echo "✅ 前端构建成功"
