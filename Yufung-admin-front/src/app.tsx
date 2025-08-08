@@ -22,6 +22,12 @@ import '@ant-design/v5-patch-for-react-19';
 
 const isDev = process.env.NODE_ENV === 'development';
 const isDevOrTest = isDev || process.env.CI;
+console.log('Current Environment:', {
+  NODE_ENV: process.env.NODE_ENV,
+  isDev,
+  isDevOrTest
+});
+
 const loginPath = '/user/login';
 
 // 将用户菜单转换为ProLayout菜单格式，启用国际化功能
@@ -299,6 +305,7 @@ export const layout: RunTimeLayoutConfig = ({
  * @doc https://umijs.org/docs/max/request#配置
  */
 export const request: RequestConfig = {
-  baseURL: isDev ? 'http://localhost:8088' : 'https://proapi.azurewebsites.net',
+  baseURL: 'http://106.52.172.124:8088',
   ...errorConfig,
 };
+console.log('API Base URL:', 'http://106.52.172.124:8088');
