@@ -1,28 +1,73 @@
 #!/bin/bash
 
-# 快速部署脚本（优化缓存）
-echo "开始快速部署..."
+# 彻底清理部署脚本
+echo "🚀 开始彻底清理部署..."
 
 # 检查Docker状态
-echo "检查Docker状态..."
+echo "📋 检查Docker状态..."
 docker --version || { echo "❌ Docker未安装"; exit 1; }
 
-# 停止并删除现有容器
-echo "清理现有容器..."
-docker stop yufung-backend yufung-frontend 2>/dev/null
-docker rm yufung-backend yufung-frontend 2>/dev/null
+# 停止所有相关容器
+echo "🛑 停止所有相关容器..."
+docker stop $(docker ps -aq --filter "name=yufung") 2>/dev/null || true
+docker rm $(docker ps -aq --filter "name=yufung") 2>/dev/null || true
 
-# 删除旧镜像（保留缓存层）
-echo "清理旧镜像..."
-docker rmi yufung-backend:latest yufung-frontend:latest 2>/dev/null
+# 删除所有相关镜像
+echo "🗑️ 删除所有相关镜像..."
+docker rmi $(docker images --filter "reference=yufung*" -q) 2>/dev/null || true
 
-# 创建Docker网络
-echo "创建Docker网络..."
-docker network create yufung-network 2>/dev/null || echo "网络已存在"
+# 清理Docker构建缓存
+echo "🧹 清理Docker构建缓存..."
+docker builder prune -f
 
-# 构建后端（使用缓存）
-echo "构建后端镜像..."
-docker build \
+# 删除Docker网络
+echo "🌐 重建Docker网络..."
+docker network rm yufung-network 2>/dev/null || true
+docker network create yufung-network
+
+# 清理前端所有构建产物和缓存
+echo "🧽 彻底清理前端缓存..."
+cd Yufung-admin-front
+rm -rf dist
+rm -rf build
+rm -rf .umi
+rm -rf .umi-production
+rm -rf node_modules/.cache
+rm -rf node_modules/.vite
+rm -rf node_modules/.max
+find . -name "*.cache" -type f -delete 2>/dev/null || true
+
+# 重新安装依赖（确保没有缓存）
+echo "📦 重新安装前端依赖..."
+npm ci --cache /tmp/empty-cache
+
+# 手动构建前端（不通过Docker）
+echo "🔨 手动构建前端..."
+npm run build
+
+# 检查构建结果
+echo "🔍 检查构建结果..."
+if [ ! -d "dist" ]; then
+    echo "❌ 前端构建失败，dist目录不存在"
+    exit 1
+fi
+
+# 检查是否还有旧的API地址
+echo "🔎 检查是否还有旧的API地址..."
+if grep -r "proapi.azurewebsites.net" dist/ 2>/dev/null; then
+    echo "❌ 构建结果中仍包含旧的API地址！"
+    echo "📄 包含旧地址的文件："
+    grep -r "proapi.azurewebsites.net" dist/ 2>/dev/null || true
+    exit 1
+else
+    echo "✅ 构建结果检查通过，未发现旧的API地址"
+fi
+
+cd ..
+
+# 构建后端镜像
+echo "🏗️ 构建后端镜像..."
+docker build --no-cache \
     --build-arg GOPROXY=https://goproxy.cn,direct \
     --build-arg GOSUMDB=sum.golang.google.cn \
     --build-arg GO111MODULE=on \
@@ -30,25 +75,16 @@ docker build \
 
 echo "✅ 后端构建成功"
 
-# 构建前端（强制重新构建，不使用缓存）
-echo "构建前端镜像..."
+# 构建前端镜像
+echo "🏗️ 构建前端镜像..."
 cd Yufung-admin-front
-
-# 清理前端构建缓存
-echo "清理前端构建缓存..."
-rm -rf dist
-rm -rf node_modules/.cache
-
-# 强制重新构建前端镜像，不使用Docker缓存
 docker build --no-cache -t yufung-frontend:latest . || { echo "❌ 前端构建失败"; cd ..; exit 1; }
 cd ..
 
 echo "✅ 前端构建成功"
 
-# 启动容器
-echo "启动容器..."
-
 # 启动后端容器
+echo "🚀 启动后端容器..."
 docker run -d \
     --name yufung-backend \
     --network yufung-network \
@@ -60,6 +96,7 @@ docker run -d \
     yufung-backend:latest || { echo "❌ 后端启动失败"; exit 1; }
 
 # 启动前端容器
+echo "🚀 启动前端容器..."
 docker run -d \
     --name yufung-frontend \
     --network yufung-network \
@@ -70,16 +107,26 @@ docker run -d \
 
 echo "✅ 容器启动成功"
 
-# 等待启动
-echo "等待服务启动..."
-sleep 10
+# 等待服务启动
+echo "⏳ 等待服务启动..."
+sleep 15
 
-# 检查状态
-echo "检查服务状态..."
+# 检查服务状态
+echo "📊 检查服务状态..."
 docker ps | grep yufung
 
+# 检查前端容器日志
+echo "📋 检查前端容器日志..."
+docker logs yufung-frontend --tail 10
+
+# 测试后端连通性
+echo "🔗 测试后端连通性..."
+curl -f http://localhost:8088/health || echo "⚠️ 后端健康检查失败"
+
 echo ""
-echo "🎉 快速部署完成！"
+echo "🎉 彻底清理部署完成！"
 echo "📍 后端: http://localhost:8088"
 echo "📍 前端: http://localhost:8080"
-echo "🔍 健康检查: http://localhost:8088/health" 
+echo "🔍 健康检查: http://localhost:8088/health"
+echo ""
+echo "🔧 如果仍有问题，请清除浏览器缓存并硬刷新页面！" 
