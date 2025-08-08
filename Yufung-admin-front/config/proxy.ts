@@ -28,9 +28,9 @@ export default {
    * @doc https://github.com/chimurai/http-proxy-middleware
    */
   test: {
-    // localhost:8000/api/** -> https://preview.pro.ant.design/api/**
+    // localhost:8000/api/** -> http://106.52.172.124:8088/api/**
     '/api/': {
-      target: 'https://proapi.azurewebsites.net',
+      target: 'http://106.52.172.124:8088',
       changeOrigin: true,
       pathRewrite: { '^': '' },
     },
