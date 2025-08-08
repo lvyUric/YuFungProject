@@ -16,9 +16,10 @@ docker rm $(docker ps -aq --filter "name=yufung") 2>/dev/null || true
 echo "🗑️ 删除所有相关镜像..."
 docker rmi $(docker images --filter "reference=yufung*" -q) 2>/dev/null || true
 
-# 清理Docker构建缓存
-echo "🧹 清理Docker构建缓存..."
-docker builder prune -f
+# 彻底清理Docker缓存
+echo "🧹 彻底清理Docker缓存..."
+docker system prune -af --volumes
+docker builder prune -af
 
 # 删除Docker网络
 echo "🌐 重建Docker网络..."
@@ -39,10 +40,23 @@ find . -name "*.cache" -type f -delete 2>/dev/null || true
 
 # 重新安装依赖（确保没有缓存）
 echo "📦 重新安装前端依赖..."
-npm ci --cache /tmp/empty-cache
+rm -rf node_modules package-lock.json
+npm install --no-audit --no-fund
 
 # 手动构建前端（不通过Docker）
 echo "🔨 手动构建前端..."
+echo "🔧 当前环境变量:"
+echo "NODE_ENV: $NODE_ENV"
+echo "UMI_ENV: $UMI_ENV"
+
+# 设置环境变量确保使用正确的配置
+export NODE_ENV=production
+export UMI_ENV=dev
+
+echo "🔧 设置后的环境变量:"
+echo "NODE_ENV: $NODE_ENV"
+echo "UMI_ENV: $UMI_ENV"
+
 npm run build
 
 # 检查构建结果
@@ -51,6 +65,9 @@ if [ ! -d "dist" ]; then
     echo "❌ 前端构建失败，dist目录不存在"
     exit 1
 fi
+
+echo "📁 dist目录内容:"
+ls -la dist/
 
 # 检查是否还有旧的API地址
 echo "🔎 检查是否还有旧的API地址..."
@@ -63,11 +80,20 @@ else
     echo "✅ 构建结果检查通过，未发现旧的API地址"
 fi
 
+# 检查是否包含正确的API地址
+echo "🔎 检查是否包含正确的API地址..."
+if grep -r "106.52.172.124:8088" dist/ 2>/dev/null; then
+    echo "✅ 找到正确的API地址："
+    grep -r "106.52.172.124:8088" dist/ 2>/dev/null | head -5
+else
+    echo "⚠️ 未找到正确的API地址，这可能是个问题"
+fi
+
 cd ..
 
 # 构建后端镜像
 echo "🏗️ 构建后端镜像..."
-docker build --no-cache \
+docker build --no-cache --pull \
     --build-arg GOPROXY=https://goproxy.cn,direct \
     --build-arg GOSUMDB=sum.golang.google.cn \
     --build-arg GO111MODULE=on \
@@ -78,7 +104,15 @@ echo "✅ 后端构建成功"
 # 构建前端镜像
 echo "🏗️ 构建前端镜像..."
 cd Yufung-admin-front
-docker build --no-cache -t yufung-frontend:latest . || { echo "❌ 前端构建失败"; cd ..; exit 1; }
+
+# 显示构建上下文信息
+echo "📋 构建上下文信息:"
+echo "当前目录: $(pwd)"
+echo "Dockerfile存在: $(test -f Dockerfile && echo '是' || echo '否')"
+echo "dist目录存在: $(test -d dist && echo '是' || echo '否')"
+
+# 构建镜像并显示详细输出
+docker build --no-cache --pull --progress=plain -t yufung-frontend:latest . || { echo "❌ 前端构建失败"; cd ..; exit 1; }
 cd ..
 
 echo "✅ 前端构建成功"
